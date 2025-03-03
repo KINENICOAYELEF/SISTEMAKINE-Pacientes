@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Paciente - SISTEMAKINE</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Barra lateral -->
+        <div class="sidebar">
+            <div class="sidebar-heading bg-primary text-white py-3">
+                <i class="fas fa-heartbeat me-2"></i>Sistema Kinesiológico
+            </div>
+            
+            <div class="list-group list-group-flush">
+                <a href="dashboard.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-home me-2"></i>Panel Principal
+                </a>
+                
+                <div class="sidebar-category">PACIENTES</div>
+                
+                <a href="nuevo-paciente.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-user-plus me-2"></i>Formulario de Ingreso
+                </a>
+                <a href="listado-pacientes.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-users me-2"></i>Listado de Pacientes
+                </a>
+                
+                <div class="sidebar-category">EVALUACIÓN</div>
+                
+                <a href="diagnostico.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-stethoscope me-2"></i>Diagnóstico Kinesiológico
+                </a>
+                <a href="plan-tratamiento.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-clipboard-list me-2"></i>Plan de Tratamiento
+                </a>
+                <a href="evoluciones.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-chart-line me-2"></i>Evoluciones
+                </a>
+                
+                <div class="sidebar-category">ANÁLISIS</div>
+                
+                <a href="dashboard-analisis.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-chart-bar me-2"></i>Dashboard y Análisis
+                </a>
+            </div>
+            
+            <div class="mt-auto p-3 border-top">
+                <button id="btnCerrarSesion" class="btn btn-danger w-100">
+                    <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                </button>
+            </div>
+        </div>
+        
+        <!-- Contenido principal -->
+        <div class="main-content w-100">
+            <!-- Cabecera con usuario -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="dashboard.html">Inicio</a></li>
+                        <li class="breadcrumb-item"><a href="listado-pacientes.html">Pacientes</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Detalle Paciente</li>
+                    </ol>
+                </nav>
+                
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle me-2"></i><span id="nombreUsuario">Kinesiólogo</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="perfil.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="configuracion.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#" id="linkCerrarSesion"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Información del paciente -->
+            <div class="card shadow-sm mb-4" id="detallePaciente">
+                <div class="card-header bg-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0"><i class="fas fa-user me-2"></i>Información del Paciente</h4>
+                        <div>
+                            <button class="btn btn-outline-primary" id="btnEditar">
+                                <i class="fas fa-edit me-2"></i>Editar
+                            </button>
+                            <button class="btn btn-outline-secondary" id="btnImprimir">
+                                <i class="fas fa-print me-2"></i>Imprimir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="p-4 text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <p class="mt-2">Cargando información del paciente...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pestañas de información -->
+            <ul class="nav nav-tabs mb-3" id="pacienteTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="historia-tab" data-bs-toggle="tab" data-bs-target="#historia" type="button" role="tab" aria-controls="historia" aria-selected="true">
+                        <i class="fas fa-file-medical me-2"></i>Historia Clínica
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="diagnosticos-tab" data-bs-toggle="tab" data-bs-target="#diagnosticos" type="button" role="tab" aria-controls="diagnosticos" aria-selected="false">
+                        <i class="fas fa-stethoscope me-2"></i>Diagnósticos
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="evoluciones-tab" data-bs-toggle="tab" data-bs-target="#evoluciones" type="button" role="tab" aria-controls="evoluciones" aria-selected="false">
+                        <i class="fas fa-chart-line me-2"></i>Evoluciones
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="documentos-tab" data-bs-toggle="tab" data-bs-target="#documentos" type="button" role="tab" aria-controls="documentos" aria-selected="false">
+                        <i class="fas fa-file-alt me-2"></i>Documentos
+                    </button>
+                </li>
+            </ul>
+            
+            <!-- Contenido de las pestañas -->
+            <div class="tab-content">
+                <!-- Historia Clínica -->
+                <div class="tab-pane fade show active" id="historia" role="tabpanel" aria-labelledby="historia-tab">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Historia Clínica Completa</h5>
+                        </div>
+                        <div class="card-body" id="historiaClinica">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando...</span>
+                                </div>
+                                <p class="mt-2">Cargando historia clínica...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Diagnósticos -->
+                <div class="tab-pane fade" id="diagnosticos" role="tabpanel" aria-labelledby="diagnosticos-tab">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">Historial de Diagnósticos</h5>
+                        <a href="#" class="btn btn-primary" id="btnNuevoDiagnostico">
+                            <i class="fas fa-plus me-2"></i>Nuevo Diagnóstico
+                        </a>
+                    </div>
+                    
+                    <div class="card shadow-sm">
+                        <div class="card-body p-0" id="listaDiagnosticos">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando...</span>
+                                </div>
+                                <p class="mt-2">Cargando diagnósticos...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Evoluciones -->
+                <div class="tab-pane fade" id="evoluciones" role="tabpanel" aria-labelledby="evoluciones-tab">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">Evoluciones del Paciente</h5>
+                        <a href="#" class="btn btn-primary" id="btnNuevaEvolucion">
+                            <i class="fas fa-plus me-2"></i>Nueva Evolución
+                        </a>
+                    </div>
+                    
+                    <div class="card shadow-sm">
+                        <div class="card-body p-0" id="listaEvoluciones">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando...</span>
+                                </div>
+                                <p class="mt-2">Cargando evoluciones...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Documentos -->
+                <div class="tab-pane fade" id="documentos" role="tabpanel" aria-labelledby="documentos-tab">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">Documentos Adjuntos</h5>
+                        <button class="btn btn-primary" id="btnNuevoDocumento">
+                            <i class="fas fa-upload me-2"></i>Subir Documento
+                        </button>
+                    </div>
+                    
+                    <div class="card shadow-sm">
+                        <div class="card-body p-0" id="listaDocumentos">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando...</span>
+                                </div>
+                                <p class="mt-2">Cargando documentos...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para subir documentos -->
+    <div class="modal fade" id="modalDocumento" tabindex="-1" aria-labelledby="modalDocumentoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalDocumentoLabel">Subir Documento</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formDocumento">
+                        <div class="mb-3">
+                            <label for="tituloDocumento" class="form-label">Título del documento</label>
+                            <input type="text" class="form-control" id="tituloDocumento" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tipoDocumento" class="form-label">Tipo de documento</label>
+                            <select class="form-select" id="tipoDocumento" required>
+                                <option value="" selected disabled>Seleccionar...</option>
+                                <option value="Informe médico">Informe médico</option>
+                                <option value="Examen">Examen</option>
+                                <option value="Radiografía">Radiografía</option>
+                                <option value="Consentimiento">Consentimiento</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="descripcionDocumento" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcionDocumento" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="archivoDocumento" class="form-label">Archivo</label>
+                            <input type="file" class="form-control" id="archivoDocumento" required>
+                            <div class="form-text">Formatos permitidos: PDF, JPG, PNG, DOC, DOCX. Tamaño máximo: 5MB.</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btnGuardarDocumento">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
+    
+    <!-- Configuración de Firebase y scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/pacientes.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtener ID del paciente de la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const pacienteId = urlParams.get('id');
+            
+            if (!pacienteId) {
+                alert('ID de paciente no especificado');
+                window.location.href = 'listado-pacientes.html';
+                return;
+            }
+            
+            // Referencias a elementos DOM
+            const detallePaciente = document.getElementById('detallePaciente');
+            const historiaClinica = document.getElementById('historiaClinica');
+            const listaDiagnosticos = document.getElementById('listaDiagnosticos');
+            const listaEvoluciones = document.getElementById('listaEvoluciones');
+            const listaDocumentos = document.getElementById('listaDocumentos');
+            
+            // Botones
+            const btnEditar = document.getElementById('btnEditar');
+            const btnImprimir = document.getElementById('btnImprimir');
+            const btnNuevoDiagnostico = document.getElementById('btnNuevoDiagnostico');
+            const btnNuevaEvolucion = document.getElementById('btnNuevaEvolucion');
+            const btnNuevoDocumento = document.getElementById('btnNuevoDocumento');
+            const btnGuardarDocumento = document.getElementById('btnGuardarDocumento');
+            
+            // Inicialización
+            cargarDatosPaciente();
+            
+            // Evento botón editar
+            btnEditar.addEventListener('click', function() {
+                window.location.href = `editar-paciente.html?id=${pacienteId}`;
+            });
+            
+            // Evento botón imprimir
+            btnImprimir.addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Evento botón nuevo diagnóstico
+            btnNuevoDiagnostico.addEventListener('click', function() {
+                window.location.href = `diagnostico.html?id=${pacienteId}`;
+            });
+            
+            // Evento botón nueva evolución
+            btnNuevaEvolucion.addEventListener('click', function() {
+                window.location.href = `evolucion.html?id=${pacienteId}`;
+            });
+            
+            // Evento botón nuevo documento
+            btnNuevoDocumento.addEventListener('click', function() {
+                new bootstrap.Modal(document.getElementById('modalDocumento')).show();
+            });
+            
+            // Evento guardar documento
+            btnGuardarDocumento.addEventListener('click', function() {
+                subirDocumento();
+            });
+            
+            // Función para cargar datos del paciente
+            function cargarDatosPaciente() {
+                firebase.firestore().collection('pacientes').doc(pacienteId).get()
+                    .then(function(doc) {
+                        if (!doc.exists) {
+                            detallePaciente.querySelector('.card-body').innerHTML = '<div class="alert alert-danger m-4">Paciente no encontrado</div>';
+                            return;
+                        }
+                        
+                        const paciente = doc.data();
+                        
+                        // Actualizar título de la página
+                        document.title = `${paciente.nombre} - SISTEMAKINE`;
+                        
+                        // Mostrar información del paciente
+                        mostrarInfoPaciente(paciente);
+                        
+                        // Cargar datos adicionales
+                        cargarHistoriaClinica(paciente);
+                        cargarDiagnosticos();
+                        cargarEvoluciones();
+                        cargarDocumentos();
+                    })
+                    .catch(function(error) {
+                        console.error('Error al cargar datos del paciente:', error);
+                        detallePaciente.querySelector('.card-body').innerHTML = '<div class="alert alert-danger m-4">Error al cargar datos del paciente</div>';
+                    });
+            }
+            
+            // Función para mostrar información del paciente
+            function mostrarInfoPaciente(paciente) {
+                const fechaNacimiento = paciente.fechaNacimiento ? window.utils.formatearFecha(paciente.fechaNacimiento) : 'No registrada';
+                const edad = paciente.edad || window.utils.calcularEdad(paciente.fechaNacimiento) || 'No registrada';
+                const telefono = paciente.telefonoPersonal || 'No registrado';
+                const email = paciente.email || 'No registrado';
+                
+                let estadoClass = '';
+                let estadoIcon = '';
+                
+                switch(paciente.estado) {
+                    case 'Activo':
+                        estadoClass = 'text-success';
+                        estadoIcon = 'fa-check-circle';
+                        break;
+                    case 'Inactivo':
+                        estadoClass = 'text-danger';
+                        estadoIcon = 'fa-times-circle';
+                        break;
+                    case 'En espera':
+                        estadoClass = 'text-warning';
+                        estadoIcon = 'fa-clock';
+                        break;
+                    default:
+                        estadoClass = 'text-secondary';
+                        estadoIcon = 'fa-question-circle';
+                }
+                
+                detallePaciente.querySelector('.card-body').innerHTML = `
+                    <div class="row p-4">
+                        <div class="col-md-2 text-center">
+                            <div class="mb-3">
+                                <div class="avatar bg-primary text-white mx-auto" style="width: 100px; height: 100px; font-size: 2.5rem; display: flex; align-items: center; justify-content: center;">
+                                    ${window.utils.obtenerIniciales(paciente.nombre)}
+                                </div>
+                            </div>
+                            <div class="d-grid gap-2">
+                                ${telefono !== 'No registrado' ? `<a href="${window.utils.crearEnlaceWhatsApp(telefono, 'Hola, le escribo desde SISTEMAKINE')}" class="btn btn-sm btn-success" target="_blank">
+                                    <i class="fab fa-whatsapp me-2"></i>WhatsApp
+                                </a>` : ''}
+                                ${email !== 'No registrado' ? `<a href="${window.utils.crearEnlaceEmail(email, 'Contacto SISTEMAKINE', 'Estimado/a ' + paciente.nombre + ',')}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-envelope me-2"></i>Email
+                                </a>` : ''}
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <h2 class="mb-3">${paciente.nombre}</h2>
+                            <div class="mb-2">
+                                <i class="fas fa-id-card me-2 text-muted"></i> <strong>RUT:</strong> ${paciente.rut || 'No registrado'}
+                            </div>
+                            <div class="mb-2">
+                                <i class="fas fa-birthday-cake me-2 text-muted"></i> <strong>Fecha Nacimiento:</strong> ${fechaNacimiento} (${edad} años)
+                            </div>
+                            <div class="mb-2">
+                                <i class="fas fa-venus-mars me-2 text-muted"></i> <strong>Género:</strong> ${paciente.genero || 'No registrado'}
+                            </div>
+                            <div class="mb-2">
+                                <i class="fas fa-phone me-2 text-muted"></i> <strong>Teléfono:</strong> ${telefono}
+                            </div>
+                            <div class="mb-2">
+                                <i class="fas fa-envelope me-2 text-muted"></i> <strong>Email:</strong> ${email}
+                            </div>
+                            <div class="mb-2">
+                                <i class="fas fa-map-marker-alt me-2 text-muted"></i> <strong>Dirección:</strong> ${paciente.direccion || 'No registrada'}
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="card h-100">
+                                <div class="card-header bg-light py-2">
+                                    <h5 class="mb-0">Información Clínica</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-2">
+                                        <i class="fas fa-stethoscope me-2 text-muted"></i> <strong>Diagnóstico:</strong> ${paciente.diagnostico || paciente.motivoConsulta?.diagnosticoMedico || 'No registrado'}
+                                    </div>
+                                    <div class="mb-2">
+                                        <i class="fas fa-heartbeat me-2 text-muted"></i> <strong>Motivo Consulta:</strong> ${paciente.motivoConsulta?.motivoConsulta || 'No registrado'}
+                                    </div>
+                                    <div class="mb-2">
+                                        <i class="fas fa-user-md me-2 text-muted"></i> <strong>Profesional Deriva:</strong> ${paciente.motivoConsulta?.profesionalDeriva || 'No registrado'}
+                                    </div>
+                                    <div class="mb-2">
+                                        <i class="fas fa-calendar-alt me-2 text-muted"></i> <strong>Inicio Síntomas:</strong> ${paciente.motivoConsulta?.inicioSintomas ? window.utils.formatearFecha(paciente.motivoConsulta.inicioSintomas) : 'No registrado'}
+                                    </div>
+                                    <div class="mb-2">
+                                        <i class="fas fa-calendar-check me-2 text-muted"></i> <strong>Última Visita:</strong> ${paciente.ultimaVisita ? window.utils.formatearFecha(paciente.ultimaVisita) : 'Sin visitas'}
+                                    </div>
+                                    <div class="mb-2">
+                                        <i class="fas ${estadoIcon} me-2 ${estadoClass}"></i> <strong>Estado:</strong> <span class="${estadoClass}">${paciente.estado || 'No definido'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Función para cargar historia clínica
+            function cargarHistoriaClinica(paciente) {
+                // Formatear la historia clínica del paciente
+                const secciones = [
+                    {
+                        titulo: 'Datos Personales',
+                        icono: 'fa-id-card',
+                        contenido: `
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-2"><strong>Nombre completo:</strong> ${paciente.nombre || 'No registrado'}</div>
+                                    <div class="mb-2"><strong>RUT:</strong> ${paciente.rut || 'No registrado'}</div>
+                                    <div class="mb-2"><strong>Fecha de nacimiento:</strong> ${paciente.fechaNacimiento ? window.utils.formatearFecha(paciente.fechaNacimiento) : 'No registrada'}</div>
+                                    <div class="mb-2"><strong>Edad:</strong> ${paciente.edad || window.utils.calcularEdad(paciente.fechaNacimiento) || 'No registrada'} años</div>
+                                    <div class="mb-2"><strong>Género:</strong> ${paciente.genero || 'No registrado'}</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2"><strong>Estado civil:</strong> ${paciente.estadoCivil || 'No registrado'}</div>
+                                    <div class="mb-2"><strong>Nacionalidad:</strong> ${paciente.nacionalidad || 'No registrada'}</div>
+                                    <div class="mb-2"><strong>Teléfono:</strong> ${paciente.telefonoPersonal || 'No registrado'}</div>
+                                    <div class="mb-2"><strong>Email:</strong> ${paciente.email || 'No registrado'}</div>
+                                    <div class="mb-2"><strong>Dirección:</strong> ${paciente.direccion || 'No registrada'}</div>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        titulo: 'Información Sociolaboral',
+                        icono: 'fa-briefcase',
+                        contenido: `
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-2"><strong>Nivel educacional:</strong> ${paciente.nivelEducacional || 'No registrado'}</div>
+                                    <div class="mb-2"><strong>Ocupación actual:</strong> ${paciente.ocupacion || 'No registrada'}</div>
+                                    <div class="mb-2"><strong>Tipo de trabajo:</strong> ${paciente.tipoTrabajo || 'No registrado'}</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2"><strong>Horario laboral:</strong> ${paciente.horarioLaboral || 'No registrado'}</div>
+                                    <div class="mb-2"><strong>Condiciones ergonómicas:</strong> ${paciente.condicionesErgonomicas || 'No registradas'}</div>
+                                    <div class="mb-2"><strong>Nivel de actividad física:</strong> ${paciente.nivelActividadFisica || 'No registrado'}</div>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        titulo: 'Motivo de Consulta',
+                        icono: 'fa-file-medical',
+                        contenido: `
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-2"><strong>Diagnóstico médico:</strong> ${paciente.motivoConsulta?.diagnosticoMedico || 'No registrado'}</div>
+                                    <div class="mb-2"><strong>Profesional que deriva:</strong> ${paciente.motivoConsulta?.profesionalDeriva || 'No registrado'}</div>
+                                    <div class="mb-2"><strong>Especialidad:</strong> ${paciente.motivoConsulta?.especialidad || 'No registrada'}</div>
+                                    <div class="mb-2"><strong>Fecha de derivación:</strong> ${paciente.motivoConsulta?.fechaDerivacion ? window.utils.formatearFecha(paciente.motivoConsulta.fechaDerivacion) : 'No registrada'}</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3"><strong>Motivo de consulta específico:</strong> ${paciente.motivoConsulta?.motivoConsulta || 'No registrado'}</div>
+                                    <div class="mb-2"><strong>Inicio de síntomas:</strong> ${paciente.motivoConsulta?.inicioSintomas ? window.utils.formatearFecha(paciente.motivoConsulta.inicioSintomas) : 'No registrado'}</div>
+                                    <div class="mb-2"><strong>Mecanismo de lesión:</strong> ${paciente.motivoConsulta?.mecanismoLesion || 'No registrado'}</div>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        titulo: 'Historia de la Condición Actual',
+                        icono: 'fa-clipboard-list',
+                        contenido: `
+                            <div class="mb-3">
+                                <strong>Evolución de síntomas:</strong> 
+                                <p>${paciente.motivoConsulta?.evolucionSintomas || 'No registrada'}</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Tratamientos previos:</strong> 
+                                <p>${paciente.motivoConsulta?.tratamientosPrevios ? paciente.motivoConsulta.tratamientosPrevios.join(', ') : 'No registrados'}</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Detalles de tratamientos:</strong> 
+                                <p>${paciente.motivoConsulta?.detallesTratamientos || 'No registrados'}</p>
+                            </div>
+                        `
+                    },
+                    {
+                        titulo: 'Antecedentes Médicos',
+                        icono: 'fa-file-medical-alt',
+                        contenido: `
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-2"><strong>Enfermedades crónicas:</strong> ${paciente.historiaMedica?.enfermedadesCronicas ? paciente.historiaMedica.enfermedadesCronicas.join(', ') : 'No registradas'}</div>
+                                    <div class="mb-2"><strong>Enfermedades agudas previas:</strong> ${paciente.historiaMedica?.enfermedadesAgudas || 'No registradas'}</div>
+                                    <div class="mb-2"><strong>Cirugías previas:</strong> ${paciente.historiaMedica?.cirugiasPrevias || 'No registradas'}</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2"><strong>Traumatismos previos:</strong> ${paciente.historiaMedica?.traumatismosPrevios || 'No registrados'}</div>
+                                    <div class="mb-2"><strong>Alergias:</strong> ${paciente.historiaMedica?.alergiasMedicamentos || 'No registradas'}</div>
+                                    <div class="mb-2"><strong>Factores de riesgo cardiovascular:</strong> ${paciente.historiaMedica?.factoresRiesgoCardiovascular ? paciente.historiaMedica.factoresRiesgoCardiovascular.join(', ') : 'No registrados'}</div>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        titulo: 'Hábitos y Estilo de Vida',
+                        icono: 'fa-heart',
+                        contenido: `
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-2"><strong>Hábitos alimenticios:</strong> ${paciente.habitos?.tipoDieta || 'No registrados'}</div>
+                                    <div class="mb-2"><strong>Consumo de tabaco:</strong> ${paciente.habitos?.consumoTabaco || 'No registrado'}</div>
+                                    <div class="mb-2"><strong>Consumo de alcohol:</strong> ${paciente.habitos?.consumoAlcohol || 'No registrado'}</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2"><strong>Práctica de deportes:</strong> ${paciente.habitos?.practicaDeportes || 'No registrada'}</div>
+                                    <div class="mb-2"><strong>Frecuencia:</strong> ${paciente.habitos?.frecuenciaDeporte || 'No registrada'}</div>
+                                    <div class="mb-2"><strong>Horas de sueño:</strong> ${paciente.habitos?.horasSueno || 'No registradas'}</div>
+                                </div>
+                            </div>
+                        `
+                    }
+                ];
+                
+                let html = '';
+                
+                secciones.forEach(seccion => {
+                    html += `
+                        <div class="mb-4">
+                            <h5><i class="fas ${seccion.icono} me-2"></i>${seccion.titulo}</h5>
+                            <hr>
+                            ${seccion.contenido}
+                        </div>
+                    `;
+                });
+                
+                historiaClinica.innerHTML = html;
+            }
+            
+            // Función para cargar diagnósticos
+            function cargarDiagnosticos() {
+                firebase.firestore().collection('diagnosticos')
+                    .where('pacienteId', '==', pacienteId)
+                    .orderBy('fecha', 'desc')
+                    .get()
+                    .then(function(snapshot) {
+                        if (snapshot.empty) {
+                            listaDiagnosticos.innerHTML = '<div class="text-center py-5">No hay diagnósticos registrados</div>';
+                            return;
+                        }
+                        
+                        let html = '<div class="list-group list-group-flush">';
+                        
+                        snapshot.forEach(function(doc) {
+                            const diagnostico = doc.data();
+                            const fecha = diagnostico.fecha ? window.utils.formatearFecha(diagnostico.fecha, true) : 'Fecha no registrada';
+                            
+                            html += `
+                                <a href="ver-diagnostico.html?id=${doc.id}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">${diagnostico.diagnostico || 'Sin título'}</h5>
+                                        <small>${fecha}</small>
+                                    </div>
+                                    <p class="mb-1">${window.utils.truncarTexto(diagnostico.observaciones || 'Sin observaciones', 150)}</p>
+                                    <small class="text-muted">Por: ${diagnostico.profesionalNombre || 'No registrado'}</small>
+                                </a>
+                            `;
+                        });
+                        
+                        html += '</div>';
+                        listaDiagnosticos.innerHTML = html;
+                    })
+                    .catch(function(error) {
+                        console.error('Error al cargar diagnósticos:', error);
+                        listaDiagnosticos.innerHTML = '<div class="alert alert-danger m-4">Error al cargar diagnósticos</div>';
+                    });
+            }
+            
+            // Función para cargar evoluciones
+            function cargarEvoluciones() {
+                firebase.firestore().collection('evoluciones')
+                    .where('pacienteId', '==', pacienteId)
+                    .orderBy('fecha', 'desc')
+                    .get()
+                    .then(function(snapshot) {
+                        if (snapshot.empty) {
+                            listaEvoluciones.innerHTML = '<div class="text-center py-5">No hay evoluciones registradas</div>';
+                            return;
+                        }
+                        
+                        let html = '<div class="timeline p-4">';
+                        
+                        snapshot.forEach(function(doc) {
+                            const evolucion = doc.data();
+                            const fecha = evolucion.fecha ? window.utils.formatearFecha(evolucion.fecha, true) : 'Fecha no registrada';
+                            
+                            html += `
+                                <div class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h4 class="timeline-title">
+                                            ${fecha}
+                                            <small class="text-muted">${evolucion.profesionalNombre || 'No registrado'}</small>
+                                        </h4>
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <h5 class="card-title">Sesión #${evolucion.numeroSesion || '?'}</h5>
+                                                <h6 class="card-subtitle mb-2 text-muted">${evolucion.tipoSesion || 'Tipo no especificado'}</h6>
+                                                <p class="card-text">${evolucion.descripcion || 'Sin descripción'}</p>
+                                                <a href="ver-evolucion.html?id=${doc.id}" class="card-link">Ver detalles</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        
+                        html += '</div>';
+                        listaEvoluciones.innerHTML = html;
+                    })
+                    .catch(function(error) {
+                        console.error('Error al cargar evoluciones:', error);
+                        listaEvoluciones.innerHTML = '<div class="alert alert-danger m-4">Error al cargar evoluciones</div>';
+                    });
+            }
+            
+            // Función para cargar documentos
+            function cargarDocumentos() {
+                firebase.firestore().collection('documentos')
+                    .where('pacienteId', '==', pacienteId)
+                    .orderBy('fechaSubida', 'desc')
+                    .get()
+                    .then(function(snapshot) {
+                        if (snapshot.empty) {
+                            listaDocumentos.innerHTML = '<div class="text-center py-5">No hay documentos adjuntos</div>';
+                            return;
+                        }
+                        
+                        let html = '<div class="table-responsive"><table class="table table-hover">';
+                        html += `
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Tipo</th>
+                                    <th>Fecha</th>
+                                    <th>Tamaño</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                        `;
+                        
+                        snapshot.forEach(function(doc) {
+                            const documento = doc.data();
+                            const fecha = documento.fechaSubida ? window.utils.formatearFecha(documento.fechaSubida, true) : 'Fecha no registrada';
+                            const tamano = documento.tamano ? formatearTamano(documento.tamano) : 'No disponible';
+                            
+                            // Determinar icono según tipo de archivo
+                            let icono = 'fa-file';
+                            if (documento.url) {
+                                if (documento.url.includes('.pdf')) {
+                                    icono = 'fa-file-pdf';
+                                } else if (documento.url.includes('.doc') || documento.url.includes('.docx')) {
+                                    icono = 'fa-file-word';
+                                } else if (documento.url.includes('.jpg') || documento.url.includes('.jpeg') || documento.url.includes('.png')) {
+                                    icono = 'fa-file-image';
+                                }
+                            }
+                            
+                            html += `
+                                <tr>
+                                    <td>
+                                        <i class="fas ${icono} me-2"></i>
+                                        ${documento.titulo || 'Sin título'}
+                                    </td>
+                                    <td>${documento.tipo || 'No especificado'}</td>
+                                    <td>${fecha}</td>
+                                    <td>${tamano}</td>
+                                    <td>
+                                        <a href="${documento.url}" class="btn btn-sm btn-outline-primary" target="_blank" title="Ver">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-danger btn-eliminar-documento" data-id="${doc.id}" title="Eliminar">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                        
+                        html += '</tbody></table></div>';
+                        listaDocumentos.innerHTML = html;
+                        
+                        // Agregar eventos a los botones de eliminar
+                        document.querySelectorAll('.btn-eliminar-documento').forEach(function(btn) {
+                            btn.addEventListener('click', function() {
+                                const documentoId = this.getAttribute('data-id');
+                                if (confirm('¿Está seguro que desea eliminar este documento?')) {
+                                    eliminarDocumento(documentoId);
+                                }
+                            });
+                        });
+                    })
+                    .catch(function(error) {
+                        console.error('Error al cargar documentos:', error);
+                        listaDocumentos.innerHTML = '<div class="alert alert-danger m-4">Error al cargar documentos</div>';
+                    });
+            }
+            
+            // Función para subir documento
+            function subirDocumento() {
+                const titulo = document.getElementById('tituloDocumento').value;
+                const tipo = document.getElementById('tipoDocumento').value;
+                const descripcion = document.getElementById('descripcionDocumento').value;
+                const archivo = document.getElementById('archivoDocumento').files[0];
+                
+                if (!titulo || !tipo || !archivo) {
+                    alert('Por favor, complete los campos obligatorios');
+                    return;
+                }
+                
+                // Validar tamaño de archivo (máximo 5MB)
+                if (archivo.size > 5 * 1024 * 1024) {
+                    alert('El archivo excede el tamaño máximo permitido (5MB)');
+                    return;
+                }
+                
+                // Mostrar indicador de carga
+                document.getElementById('btnGuardarDocumento').innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Subiendo...';
+                document.getElementById('btnGuardarDocumento').disabled = true;
+                
+                // Subir archivo a Storage
+                const storageRef = firebase.storage().ref();
+                const fileRef = storageRef.child(`pacientes/${pacienteId}/documentos/${Date.now()}_${archivo.name}`);
+                
+                fileRef.put(archivo).then(function(snapshot) {
+                    // Obtener URL de descarga
+                    return snapshot.ref.getDownloadURL();
+                }).then(function(url) {
+                    // Guardar referencia en Firestore
+                    return firebase.firestore().collection('documentos').add({
+                        pacienteId: pacienteId,
+                        titulo: titulo,
+                        tipo: tipo,
+                        descripcion: descripcion,
+                        url: url,
+                        nombreArchivo: archivo.name,
+                        tamano: archivo.size,
+                        tipoArchivo: archivo.type,
+                        fechaSubida: firebase.firestore.FieldValue.serverTimestamp(),
+                        subidoPor: firebase.auth().currentUser.uid,
+                        subidoPorNombre: firebase.auth().currentUser.displayName || firebase.auth().currentUser.email
+                    });
+                }).then(function() {
+                    // Cerrar modal y mostrar mensaje de éxito
+                    bootstrap.Modal.getInstance(document.getElementById('modalDocumento')).hide();
+                    window.utils.mostrarNotificacion('Documento subido correctamente', 'success');
+                    
+                    // Recargar lista de documentos
+                    cargarDocumentos();
+                    
+                    // Limpiar formulario
+                    document.getElementById('formDocumento').reset();
+                }).catch(function(error) {
+                    console.error('Error al subir documento:', error);
+                    alert('Error al subir documento: ' + error.message);
+                }).finally(function() {
+                    // Restaurar botón
+                    document.getElementById('btnGuardarDocumento').innerHTML = 'Guardar';
+                    document.getElementById('btnGuardarDocumento').disabled = false;
+                });
+            }
+            
+            // Función para eliminar documento
+            function eliminarDocumento(documentoId) {
+                firebase.firestore().collection('documentos').doc(documentoId).get()
+                    .then(function(doc) {
+                        if (!doc.exists) {
+                            alert('Documento no encontrado');
+                            return;
+                        }
+                        
+                        const documento = doc.data();
+                        
+                        // Eliminar archivo de Storage
+                        if (documento.url) {
+                            return firebase.storage().refFromURL(documento.url).delete()
+                                .then(function() {
+                                    // Eliminar referencia de Firestore
+                                    return firebase.firestore().collection('documentos').doc(documentoId).delete();
+                                })
+                                .then(function() {
+                                    window.utils.mostrarNotificacion('Documento eliminado correctamente', 'success');
+                                    cargarDocumentos();
+                                });
+                        } else {
+                            // Si no hay URL, solo eliminar referencia de Firestore
+                            return firebase.firestore().collection('documentos').doc(documentoId).delete()
+                                .then(function() {
+                                    window.utils.mostrarNotificacion('Documento eliminado correctamente', 'success');
+                                    cargarDocumentos();
+                                });
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('Error al eliminar documento:', error);
+                        alert('Error al eliminar documento: ' + error.message);
+                    });
+            }
+            
+            // Función para formatear tamaño de archivo
+            function formatearTamano(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+        });
+    </script>
+    <style>
+        /* Estilos para timeline de evoluciones */
+        .timeline {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        
+        .timeline:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background-color: #e9ecef;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        
+        .timeline-marker {
+            position: absolute;
+            left: -1.5rem;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background-color: #4285f4;
+            top: 0.25rem;
+        }
+        
+        .timeline-content {
+            padding-left: 0.5rem;
+        }
+        
+        .timeline-title {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Estilos para avatares */
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 2.5rem;
+        }
+        
+        /* Estilos para impresión */
+        @media print {
+            .sidebar, .nav-tabs, .dropdown, button, .modal {
+                display: none !important;
+            }
+            
+            .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            
+            .card {
+                border: 1px solid #ddd !important;
+                break-inside: avoid;
+            }
+            
+            .tab-pane {
+                display: block !important;
+                opacity: 1 !important;
+            }
+            
+            body {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+        }
+    </style>
+</body>
+</html>
