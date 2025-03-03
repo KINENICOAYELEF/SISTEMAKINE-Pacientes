@@ -249,6 +249,17 @@ function guardarPaciente() {
         fechaDerivacion: document.getElementById('fechaDerivacion').value ? new Date(document.getElementById('fechaDerivacion').value) : null,
         numeroInterconsulta: document.getElementById('numeroInterconsulta').value,
         prioridad: document.getElementById('prioridad').value,
+        // SINSS
+sinssSeveridad: parseInt(document.getElementById('sinssSeveridad').value) || 0,
+sinssImpacto: document.getElementById('sinssImpacto').value,
+sinssIrradiacion: document.getElementById('sinssIrradiacion').value,
+sinssNaturaleza: getCheckboxValues('sinssNaturaleza'),
+sinssSintomas: document.getElementById('sinssSintomas').value,
+sinssAgravantes: document.getElementById('sinssAgravantes').value,
+sinssAliviantes: document.getElementById('sinssAliviantes').value,
+sinssPatron: document.getElementById('sinssPatron').value,
+sinssVariacion: document.getElementById('sinssVariacion').value,
+sinssDuracion: document.getElementById('sinssDuracion').value,
         
         // Historia de la condición
         inicioSintomas: document.getElementById('inicioSintomas').value ? new Date(document.getElementById('inicioSintomas').value) : null,
