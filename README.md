@@ -16,9 +16,10 @@ Actualmente estamos desarrollando el SITIO 1 (SISTEMAKINE-Pacientes).
 - [x] Configuración de Firebase
 - [x] Formulario de ingreso de pacientes (parcial)
 - [x] Sistema de autenticación
+- [x] Acrónimo SINSS
 
 ### Componentes En Desarrollo
-- [ ] Completar el formulario de ingreso de pacientes con todas las secciones requeridas
+- [ ] Completar el formulario de ingreso de pacientes con las secciones restantes
 - [ ] Lista de pacientes
 - [ ] Ficha de visualización de paciente
 - [ ] Sistema de evoluciones
@@ -56,14 +57,12 @@ Actualmente estamos desarrollando el SITIO 1 (SISTEMAKINE-Pacientes).
 Comparando el formulario actual con la ficha completa, detectamos que faltan implementar las siguientes secciones:
 
 ### Secciones principales que faltan:
-1. **Acrónimo SINSS** - No implementado en absoluto
-2. **Factores adicionales** (agravantes, aliviantes, comportamiento del dolor)
-3. **Mapa Corporal Interactivo** - No implementado
-4. **Sección 5 completa: Evaluación Física** (signos vitales, antropometría, evaluación postural, etc.)
-5. **Sección 6 completa: Escalas y Cuestionarios Estandarizados**
-6. **Sección 7 completa: Sistema de Banderas de Alerta**
-7. **Sección 9 completa: Documentación Complementaria**
-8. **Sección 10 completa: Plan de Tratamiento Inicial**
+1. **Factores adicionales** (agravantes, aliviantes, comportamiento del dolor)
+2. **Mapa Corporal Interactivo** - No implementado
+3. **Sección 5 completa: Evaluación Física** (signos vitales, antropometría, evaluación postural, etc.)
+4. **Sección 6 completa: Escalas y Cuestionarios Estandarizados**
+5. **Sección 7 completa: Sistema de Banderas de Alerta**
+6. **Sección 9 completa: Documentación Complementaria**
 
 ### Elementos específicos faltantes en secciones existentes:
 1. **Tiempo de espera desde derivación** (en 2.1)
@@ -92,14 +91,13 @@ Comparando el formulario actual con la ficha completa, detectamos que faltan imp
 ### Prioridades para implementación:
 
 **Alta prioridad:**
-- Acrónimo SINSS
+- ✅ Acrónimo SINSS (implementado)
 - Factores adicionales del dolor
 - Documentación Complementaria (carga de archivos)
-- Plan de Tratamiento Inicial
+- Sistema de Banderas de Alerta
 - Mapa Corporal Interactivo (implementación simplificada)
 
 **Media prioridad:**
-- Sistema de Banderas de Alerta
 - Evaluación Física básica
 - Escalas y Cuestionarios principales (EVA, QuickDASH, WOMAC, NDI, Oswestry)
 
@@ -126,98 +124,3 @@ const firebaseConfig = {
   messagingSenderId: "954754202697",
   appId: "1:954754202697:web:e06171f6b0ade314259398"
 };
-```
-
-## Diseño del Sistema
-
-### Estructura de Datos en Firestore:
-
-**Colecciones principales:**
-- `users` - Información de los kinesiólogos
-- `pacientes` - Datos de pacientes
-- `evoluciones` - Registros de evolución
-- `templates` - Plantillas de tratamiento
-
-**Documento de paciente:**
-```javascript
-{
-  id: "string", // Generado por Firestore
-  datosPersonales: {
-    // Campos de la sección 1
-  },
-  motivoConsulta: {
-    // Campos de la sección 2
-  },
-  historiaMedica: {
-    // Campos de la sección 3
-  },
-  habitos: {
-    // Campos de la sección 4
-  },
-  evaluacionFisica: {
-    // Campos de la sección 5
-  },
-  escalas: {
-    // Campos de la sección 6
-  },
-  banderas: {
-    // Campos de la sección 7
-  },
-  documentacion: {
-    // Referencias a archivos en Storage
-  },
-  planTratamiento: {
-    // Campos de la sección 10
-  },
-  consentimiento: {
-    // Campos de la sección 11
-  },
-  fechaCreacion: "timestamp",
-  fechaActualizacion: "timestamp",
-  kinesiologoId: "string", // Referencia al usuario creador
-  estado: "string" // Activo, Inactivo, Archivado
-}
-```
-
-## Próximos Pasos
-1. Completar el formulario de ingreso de pacientes siguiendo las prioridades establecidas
-2. Implementar el almacenamiento en Firebase Storage para documentación complementaria
-3. Desarrollar el mapa corporal interactivo con interfaz simplificada
-4. Implementar la visualización y edición de datos de pacientes
-5. Desarrollar el sistema de evoluciones
-
-## Recursos y Referencias
-- [Bootstrap 5 Documentation](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
-- [Firebase Documentation](https://firebase.google.com/docs)
-- [Font Awesome Icons](https://fontawesome.com/icons)
-
-## Notas Importantes
-- Es crucial mantener la consistencia en la estructura de datos para la integración con el SITIO 2
-- Implementar validaciones para campos obligatorios y formatos específicos
-- El mapa corporal interactivo puede requerir el uso de una biblioteca específica como FabricJS o una implementación basada en SVG
-- Las escalas estandarizadas deben implementar el cálculo automático de puntajes según sus algoritmos específicos
-
-## Plan de Implementación Progresiva
-Para no sobrecargar el sistema de una sola vez, se recomienda una implementación por fases:
-
-**Fase 1 (Actual):**
-- Formulario de ingreso básico con datos personales, motivo de consulta, historia médica básica, hábitos y consentimiento.
-
-**Fase 2:**
-- Integración del mapa corporal y factores adicionales de dolor
-- Implementación del acrónimo SINSS
-- Plan de tratamiento inicial
-
-**Fase 3:**
-- Sistema de banderas de alerta
-- Evaluación física básica
-- Carga de documentación complementaria
-
-**Fase 4:**
-- Escalas y cuestionarios principales
-- Refinamiento de la interfaz de usuario
-- Optimización de la experiencia móvil
-
-**Fase 5:**
-- Implementación completa de todas las secciones restantes
-- Integración con el SITIO 2 (SISTEMAKINE-Clínico)
