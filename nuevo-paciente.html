@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Paciente - SISTEMAKINE</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Barra lateral -->
+        <div class="sidebar">
+            <div class="sidebar-heading bg-primary text-white py-3">
+                <i class="fas fa-heartbeat me-2"></i>Sistema Kinesiológico
+            </div>
+            
+            <div class="list-group list-group-flush">
+                <a href="dashboard.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-home me-2"></i>Panel Principal
+                </a>
+                
+                <div class="sidebar-category">PACIENTES</div>
+                
+                <a href="nuevo-paciente.html" class="list-group-item list-group-item-action active">
+                    <i class="fas fa-user-plus me-2"></i>Formulario de Ingreso
+                </a>
+                <a href="listado-pacientes.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-users me-2"></i>Listado de Pacientes
+                </a>
+                
+                <div class="sidebar-category">EVALUACIÓN</div>
+                
+                <a href="diagnostico.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-stethoscope me-2"></i>Diagnóstico Kinesiológico
+                </a>
+                <a href="plan-tratamiento.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-clipboard-list me-2"></i>Plan de Tratamiento
+                </a>
+                <a href="evoluciones.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-chart-line me-2"></i>Evoluciones
+                </a>
+                
+                <div class="sidebar-category">ANÁLISIS</div>
+                
+                <a href="dashboard-analisis.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-chart-bar me-2"></i>Dashboard y Análisis
+                </a>
+            </div>
+            
+            <div class="mt-auto p-3 border-top">
+                <button id="btnCerrarSesion" class="btn btn-danger w-100">
+                    <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                </button>
+            </div>
+        </div>
+        
+        <!-- Contenido principal -->
+        <div class="main-content w-100">
+            <!-- Cabecera con usuario -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3"><i class="fas fa-user-plus me-2"></i>Nuevo Paciente</h1>
+                
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle me-2"></i><span id="nombreUsuario">Kinesiólogo</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="perfil.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="configuracion.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#" id="linkCerrarSesion"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Navegación por pasos -->
+            <div class="card mb-4">
+                <div class="card-body p-0">
+                    <div class="d-flex">
+                        <button class="btn btn-primary rounded-0 flex-fill py-3 active" data-bs-toggle="pill" data-bs-target="#paso1">
+                            <i class="fas fa-user me-2"></i>Datos Personales
+                        </button>
+                        <button class="btn btn-outline-primary rounded-0 flex-fill py-3" data-bs-toggle="pill" data-bs-target="#paso2">
+                            <i class="fas fa-clipboard me-2"></i>Motivo de Consulta
+                        </button>
+                        <button class="btn btn-outline-primary rounded-0 flex-fill py-3" data-bs-toggle="pill" data-bs-target="#paso3">
+                            <i class="fas fa-notes-medical me-2"></i>Historia Médica
+                        </button>
+                        <button class="btn btn-outline-primary rounded-0 flex-fill py-3" data-bs-toggle="pill" data-bs-target="#paso4">
+                            <i class="fas fa-heartbeat me-2"></i>Hábitos y Estilo de Vida
+                        </button>
+                        <button class="btn btn-outline-primary rounded-0 flex-fill py-3" data-bs-toggle="pill" data-bs-target="#paso5">
+                            <i class="fas fa-check-circle me-2"></i>Consentimiento
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Alerta de guardado -->
+            <div class="alert alert-success alert-dismissible fade show d-none" id="alertaGuardado" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong>¡Paciente guardado correctamente!</strong> Se ha creado la ficha del paciente.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <!-- Alerta de error -->
+            <div class="alert alert-danger alert-dismissible fade show d-none" id="alertaError" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <strong>¡Error al guardar!</strong> <span id="mensajeError"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <!-- Formulario -->
+            <form id="formNuevoPaciente">
+                <div class="tab-content">
+                    <!-- Paso 1: Datos Personales -->
+                    <div class="tab-pane fade show active" id="paso1">
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-id-card me-2"></i>1.1 Datos Personales</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="nombre" class="form-label">Nombre completo *</label>
+                                    <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="rut" class="form-label">Documento de identidad (RUT/Pasaporte) *</label>
+                                    <input type="text" class="form-control" id="rut" name="rut" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="fechaNacimiento" class="form-label">Fecha de nacimiento *</label>
+                                    <input type="date" class="form-control" id="fechaNacimiento" name="fechaNacimiento" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="edad" class="form-label">Edad</label>
+                                    <input type="number" class="form-control" id="edad" readonly>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="genero" class="form-label">Género *</label>
+                                    <select class="form-select" id="genero" name="genero" required>
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Masculino">Masculino</option>
+                                        <option value="Femenino">Femenino</option>
+                                        <option value="No binario">No binario</option>
+                                        <option value="Prefiero no especificar">Prefiero no especificar</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="estadoCivil" class="form-label">Estado civil</label>
+                                    <select class="form-select" id="estadoCivil" name="estadoCivil">
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Soltero/a">Soltero/a</option>
+                                        <option value="Casado/a">Casado/a</option>
+                                        <option value="Divorciado/a">Divorciado/a</option>
+                                        <option value="Viudo/a">Viudo/a</option>
+                                        <option value="Unión libre">Unión libre</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="nacionalidad" class="form-label">Nacionalidad</label>
+                                    <input type="text" class="form-control" id="nacionalidad" name="nacionalidad">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-address-book me-2"></i>1.2 Información de Contacto</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label for="direccion" class="form-label">Dirección completa</label>
+                                    <input type="text" class="form-control" id="direccion" name="direccion">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="telefonoPersonal" class="form-label">Teléfono personal *</label>
+                                    <input type="tel" class="form-control" id="telefonoPersonal" name="telefonoPersonal" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="telefonoTrabajo" class="form-label">Teléfono trabajo</label>
+                                    <input type="tel" class="form-control" id="telefonoTrabajo" name="telefonoTrabajo">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="email" class="form-label">Correo electrónico</label>
+                                    <input type="email" class="form-control" id="email" name="email">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-briefcase me-2"></i>1.3 Datos Sociolaborales</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="nivelEducacional" class="form-label">Nivel educacional</label>
+                                    <select class="form-select" id="nivelEducacional" name="nivelEducacional">
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Básica">Básica</option>
+                                        <option value="Media">Media</option>
+                                        <option value="Técnica">Técnica</option>
+                                        <option value="Universitaria">Universitaria</option>
+                                        <option value="Postgrado">Postgrado</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="ocupacion" class="form-label">Ocupación actual</label>
+                                    <input type="text" class="form-control" id="ocupacion" name="ocupacion">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="tipoTrabajo" class="form-label">Tipo de trabajo</label>
+                                    <select class="form-select" id="tipoTrabajo" name="tipoTrabajo">
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Físico">Físico</option>
+                                        <option value="Sedentario">Sedentario</option>
+                                        <option value="Mixto">Mixto</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="horarioLaboral" class="form-label">Horario laboral</label>
+                                    <input type="text" class="form-control" id="horarioLaboral" name="horarioLaboral">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="condicionesErgonomicas" class="form-label">Condiciones ergonómicas del puesto</label>
+                                    <input type="text" class="form-control" id="condicionesErgonomicas" name="condicionesErgonomicas">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="actividadesRecreativas" class="form-label">Actividades recreativas</label>
+                                    <input type="text" class="form-control" id="actividadesRecreativas" name="actividadesRecreativas">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="nivelActividadFisica" class="form-label">Nivel de actividad física</label>
+                                    <select class="form-select" id="nivelActividadFisica" name="nivelActividadFisica">
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Sedentario">Sedentario</option>
+                                        <option value="Ligero">Ligero</option>
+                                        <option value="Moderado">Moderado</option>
+                                        <option value="Intenso">Intenso</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-ambulance me-2"></i>1.4 Información de Emergencia</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="contactoEmergencia" class="form-label">Contacto de emergencia</label>
+                                    <input type="text" class="form-control" id="contactoEmergencia" name="contactoEmergencia">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="parentesco" class="form-label">Parentesco</label>
+                                    <input type="text" class="form-control" id="parentesco" name="parentesco">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="telefonoEmergencia" class="form-label">Teléfonos de contacto</label>
+                                    <input type="tel" class="form-control" id="telefonoEmergencia" name="telefonoEmergencia">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="sistemaSalud" class="form-label">Sistema de salud/seguro médico</label>
+                                    <input type="text" class="form-control" id="sistemaSalud" name="sistemaSalud">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-hand-point-up me-2"></i>1.5 Lateralidad</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="dominanciaManual" class="form-label">Dominancia manual</label>
+                                    <select class="form-select" id="dominanciaManual" name="dominanciaManual">
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Diestro">Diestro</option>
+                                        <option value="Zurdo">Zurdo</option>
+                                        <option value="Ambidiestro">Ambidiestro</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="dominanciaPodal" class="form-label">Dominancia podal</label>
+                                    <select class="form-select" id="dominanciaPodal" name="dominanciaPodal">
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Derecha">Derecha</option>
+                                        <option value="Izquierda">Izquierda</option>
+                                        <option value="Ambas">Ambas</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <div></div> <!-- Espacio vacío para alinear botones a la derecha -->
+                            <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="pill" data-bs-target="#paso2">
+                                Siguiente <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Paso 2: Motivo de Consulta -->
+                    <div class="tab-pane fade" id="paso2">
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-file-medical me-2"></i>2.1 Derivación</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="profesionalDeriva" class="form-label">Profesional que deriva</label>
+                                    <input type="text" class="form-control" id="profesionalDeriva" name="profesionalDeriva">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="especialidad" class="form-label">Especialidad</label>
+                                    <select class="form-select" id="especialidad" name="especialidad">
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Medicina General">Medicina General</option>
+                                        <option value="Traumatología">Traumatología</option>
+                                        <option value="Neurología">Neurología</option>
+                                        <option value="Reumatología">Reumatología</option>
+                                        <option value="Medicina Deportiva">Medicina Deportiva</option>
+                                        <option value="Geriatría">Geriatría</option>
+                                        <option value="Fisiatría">Fisiatría</option>
+                                        <option value="Otro">Otro</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="diagnosticoMedico" class="form-label">Diagnóstico médico inicial</label>
+                                    <input type="text" class="form-control" id="diagnosticoMedico" name="diagnosticoMedico">
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="motivoConsulta" class="form-label">Motivo de consulta específico *</label>
+                                    <textarea class="form-control" id="motivoConsulta" name="motivoConsulta" rows="3" required></textarea>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="fechaDerivacion" class="form-label">Fecha de derivación</label>
+                                    <input type="date" class="form-control" id="fechaDerivacion" name="fechaDerivacion">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="numeroInterconsulta" class="form-label">Número de interconsulta</label>
+                                    <input type="text" class="form-control" id="numeroInterconsulta" name="numeroInterconsulta">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="prioridad" class="form-label">Prioridad asignada</label>
+                                    <select class="form-select" id="prioridad" name="prioridad">
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Alta">Alta</option>
+                                        <option value="Media">Media</option>
+                                        <option value="Baja">Baja</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-history me-2"></i>2.2 Historia de la Condición Actual</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="inicioSintomas" class="form-label">Inicio de los síntomas</label>
+                                    <input type="date" class="form-control" id="inicioSintomas" name="inicioSintomas">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="mecanismoLesion" class="form-label">Mecanismo de lesión/aparición</label>
+                                    <select class="form-select" id="mecanismoLesion" name="mecanismoLesion">
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Traumático">Traumático</option>
+                                        <option value="Gradual">Gradual</option>
+                                        <option value="Postural">Postural</option>
+                                        <option value="Post-quirúrgico">Post-quirúrgico</option>
+                                        <option value="Desconocido">Desconocido</option>
+                                        <option value="Otro">Otro</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="detallesMecanismo" class="form-label">Detalles del mecanismo</label>
+                                    <input type="text" class="form-control" id="detallesMecanismo" name="detallesMecanismo">
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="evolucionSintomas" class="form-label">Evolución temporal de los síntomas</label>
+                                    <textarea class="form-control" id="evolucionSintomas" name="evolucionSintomas" rows="3"></textarea>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <label class="form-label">Tratamientos previos</label>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="tratKinesiologia" name="tratamientosPrevios" value="Kinesiología">
+                                                <label class="form-check-label" for="tratKinesiologia">Kinesiología</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="tratFisioterapia" name="tratamientosPrevios" value="Fisioterapia">
+                                                <label class="form-check-label" for="tratFisioterapia">Fisioterapia</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="tratOsteopatia" name="tratamientosPrevios" value="Osteopatía">
+                                                <label class="form-check-label" for="tratOsteopatia">Osteopatía</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="tratQuiropraxia" name="tratamientosPrevios" value="Quiropraxia">
+                                                <label class="form-check-label" for="tratQuiropraxia">Quiropraxia</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="tratAcupuntura" name="tratamientosPrevios" value="Acupuntura">
+                                                <label class="form-check-label" for="tratAcupuntura">Acupuntura</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="tratMasoterapia" name="tratamientosPrevios" value="Masoterapia">
+                                                <label class="form-check-label" for="tratMasoterapia">Masoterapia</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="tratInfiltraciones" name="tratamientosPrevios" value="Infiltraciones">
+                                                <label class="form-check-label" for="tratInfiltraciones">Infiltraciones</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="tratCirugia" name="tratamientosPrevios" value="Cirugía">
+                                                <label class="form-check-label" for="tratCirugia">Cirugía</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="tratMedicamentos" name="tratamientosPrevios" value="Medicamentos">
+                                                <label class="form-check-label" for="tratMedicamentos">Medicamentos</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="tratOtro" name="tratamientosPrevios" value="Otro">
+                                                <label class="form-check-label" for="tratOtro">Otro</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <label for="detallesTratamientos" class="form-label">Detalles de tratamientos previos</label>
+                                    <textarea class="form-control" id="detallesTratamientos" name="detallesTratamientos" rows="2"></textarea>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <label for="intervencionesRealizadas" class="form-label">Intervenciones realizadas</label>
+                                    <textarea class="form-control" id="intervencionesRealizadas" name="intervencionesRealizadas" rows="2"></textarea>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <label for="cambiosDiurnos" class="form-label">Cambios diurnos y vespertinos</label>
+                                    <textarea class="form-control" id="cambiosDiurnos" name="cambiosDiurnos" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Acrónimo ALICIA -->
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-list-alt me-2"></i>Acrónimo ALICIA</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label for="aliciaAntecedentes" class="form-label">Antecedentes</label>
+                                    <textarea class="form-control" id="aliciaAntecedentes" name="aliciaAntecedentes" rows="2"></textarea>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="aliciaLocalizacion" class="form-label">Localización</label>
+                                    <textarea class="form-control" id="aliciaLocalizacion" name="aliciaLocalizacion" rows="2"></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="aliciaIntensidad" class="form-label">Intensidad (EVA 0-10)</label>
+                                    <input type="range" class="form-range eva-slider" id="aliciaIntensidad" name="aliciaIntensidad" min="0" max="10" step="1" value="0">
+                                    <div class="d-flex justify-content-between">
+                                        <span>0 - Sin dolor</span>
+                                        <span id="valorEvaAlicia">0</span>
+                                        <span>10 - Máximo dolor</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label">Características</label>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="caracteristicaPunzante" name="caracteristicasDolor" value="Punzante">
+                                                <label class="form-check-label" for="caracteristicaPunzante">Punzante</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="caracteristicaQuemante" name="caracteristicasDolor" value="Quemante">
+                                                <label class="form-check-label" for="caracteristicaQuemante">Quemante</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="caracteristicaOpresivo" name="caracteristicasDolor" value="Opresivo">
+                                                <label class="form-check-label" for="caracteristicaOpresivo">Opresivo</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="caracteristicaPulsatil" name="caracteristicasDolor" value="Pulsátil">
+                                                <label class="form-check-label" for="caracteristicaPulsatil">Pulsátil</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="caracteristicaElectrico" name="caracteristicasDolor" value="Eléctrico">
+                                                <label class="form-check-label" for="caracteristicaElectrico">Eléctrico</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="caracteristicaSordo" name="caracteristicasDolor" value="Sordo">
+                                                <label class="form-check-label" for="caracteristicaSordo">Sordo</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="caracteristicaOtro" name="caracteristicasDolor" value="Otro">
+                                                <label class="form-check-label" for="caracteristicaOtro">Otro</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="aliciaIrradiacion" class="form-label">Irradiación</label>
+                                    <textarea class="form-control" id="aliciaIrradiacion" name="aliciaIrradiacion" rows="2"></textarea>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="aliciaAtenuantes" class="form-label">Atenuantes</label>
+                                    <textarea class="form-control" id="aliciaAtenuantes" name="aliciaAtenuantes" rows="2"></textarea>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="aliciaAgravantes" class="form-label">Agravantes</label>
+                                    <textarea class="form-control" id="aliciaAgravantes" name="aliciaAgravantes" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-list-alt me-2"></i>2.3 Expectativas del Paciente</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label for="objetivosCorto" class="form-label">Objetivos a corto plazo</label>
+                                    <textarea class="form-control" id="objetivosCorto" name="objetivosCorto" rows="2"></textarea>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="objetivosMedio" class="form-label">Objetivos a mediano plazo</label>
+                                    <textarea class="form-control" id="objetivosMedio" name="objetivosMedio" rows="2"></textarea>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="objetivosLargo" class="form-label">Objetivos a largo plazo</label>
+                                    <textarea class="form-control" id="objetivosLargo" name="objetivosLargo" rows="2"></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="expectativasRecuperacion" class="form-label">Expectativas de recuperación</label>
+                                    <select class="form-select" id="expectativasRecuperacion" name="expectativasRecuperacion">
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Recuperación completa">Recuperación completa</option>
+                                        <option value="Mejora significativa">Mejora significativa</option>
+                                        <option value="Mejora parcial">Mejora parcial</option>
+                                        <option value="Control de síntomas">Control de síntomas</option>
+                                        <option value="Sin expectativas claras">Sin expectativas claras</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="nivelCompromiso" class="form-label">Nivel de compromiso con el tratamiento</label>
+                                    <select class="form-select" id="nivelCompromiso" name="nivelCompromiso">
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Alto">Alto</option>
+                                        <option value="Medio">Medio</option>
+                                        <option value="Bajo">Bajo</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-secondary btn-lg" data-bs-toggle="pill" data-bs-target="#paso1">
+                                <i class="fas fa-arrow-left me-2"></i> Anterior
+                            </button>
+                            <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="pill" data-bs-target="#paso3">
+                                Siguiente <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Paso 3: Historia Médica -->
+                    <div class="tab-pane fade" id="paso3">
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-file-medical-alt me-2"></i>3.1 Antecedentes Personales</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label class="form-label">Enfermedades crónicas</label>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enfHipertension" name="enfermedadesCronicas" value="Hipertensión">
+                                                <label class="form-check-label" for="enfHipertension">Hipertensión</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enfDiabetes" name="enfermedadesCronicas" value="Diabetes">
+                                                <label class="form-check-label" for="enfDiabetes">Diabetes</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enfAsma" name="enfermedadesCronicas" value="Asma">
+                                                <label class="form-check-label" for="enfAsma">Asma</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enfEPOC" name="enfermedadesCronicas" value="EPOC">
+                                                <label class="form-check-label" for="enfEPOC">EPOC</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enfArtritis" name="enfermedadesCronicas" value="Artritis">
+                                                <label class="form-check-label" for="enfArtritis">Artritis</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enfOsteoporosis" name="enfermedadesCronicas" value="Osteoporosis">
+                                                <label class="form-check-label" for="enfOsteoporosis">Osteoporosis</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enfCancer" name="enfermedadesCronicas" value="Cáncer">
+                                                <label class="form-check-label" for="enfCancer">Cáncer</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enfCardiaca" name="enfermedadesCronicas" value="Enfermedad cardíaca">
+                                                <label class="form-check-label" for="enfCardiaca">Enfermedad cardíaca</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enfOtro" name="enfermedadesCronicas" value="Otro">
+                                                <label class="form-check-label" for="enfOtro">Otro</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <label for="enfermedadesAgudas" class="form-label">Enfermedades agudas previas</label>
+                                    <textarea class="form-control" id="enfermedadesAgudas" name="enfermedadesAgudas" rows="2"></textarea>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <label for="hospitalizaciones" class="form-label">Hospitalizaciones (fecha y motivo)</label>
+                                    <textarea class="form-control" id="hospitalizaciones" name="hospitalizaciones" rows="2"></textarea>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <label for="cirugiasPrevias" class="form-label">Cirugías previas</label>
+                                    <textarea class="form-control" id="cirugiasPrevias" name="cirugiasPrevias" rows="2"></textarea>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <label for="antecedentesOrtopedicos" class="form-label">Antecedentes ortopédicos/musculoesqueléticos previos</label>
+                                    <textarea class="form-control" id="antecedentesOrtopedicos" name="antecedentesOrtopedicos" rows="2"></textarea>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="traumatismosPrevios" class="form-label">Traumatismos previos</label>
+                                    <textarea class="form-control" id="traumatismosPrevios" name="traumatismosPrevios" rows="2"></textarea>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="fracturasPrevias" class="form-label">Fracturas previas</label>
+                                    <textarea class="form-control" id="fracturasPrevias" name="fracturasPrevias" rows="2"></textarea>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <label class="form-label">Factores de riesgo cardiovascular</label>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="frcHipertension" name="factoresRiesgoCardiovascular" value="Hipertensión">
+                                                <label class="form-check-label" for="frcHipertension">Hipertensión</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="frcDiabetes" name="factoresRiesgoCardiovascular" value="Diabetes">
+                                                <label class="form-check-label" for="frcDiabetes">Diabetes</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="frcDislipidemia" name="factoresRiesgoCardiovascular" value="Dislipidemia">
+                                                <label class="form-check-label" for="frcDislipidemia">Dislipidemia</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="frcObesidad" name="factoresRiesgoCardiovascular" value="Obesidad">
+                                                <label class="form-check-label" for="frcObesidad">Obesidad</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="frcTabaquismo" name="factoresRiesgoCardiovascular" value="Tabaquismo">
+                                                <label class="form-check-label" for="frcTabaquismo">Tabaquismo</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="frcSedentarismo" name="factoresRiesgoCardiovascular" value="Sedentarismo">
+                                                <label class="form-check-label" for="frcSedentarismo">Sedentarismo</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="frcAntecedentesF" name="factoresRiesgoCardiovascular" value="Antecedentes familiares">
+                                                <label class="form-check-label" for="frcAntecedentesF">Antecedentes familiares</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="frcEstres" name="factoresRiesgoCardiovascular" value="Estrés">
+                                                <label class="form-check-label" for="frcEstres">Estrés</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-users me-2"></i>3.2 Antecedentes Familiares</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="enfermedadesHereditarias" class="form-label">Enfermedades hereditarias</label>
+                                    <textarea class="form-control" id="enfermedadesHereditarias" name="enfermedadesHereditarias" rows="2"></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="condicionesGeneticas" class="form-label">Condiciones genéticas relevantes</label>
+                                    <textarea class="form-control" id="condicionesGeneticas" name="condicionesGeneticas" rows="2"></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="antecedentesMusculoesqueleticos" class="form-label">Antecedentes de problemas musculoesqueléticos</label>
+                                    <textarea class="form-control" id="antecedentesMusculoesqueleticos" name="antecedentesMusculoesqueleticos" rows="2"></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="antecedentesAutoinmunes" class="form-label">Antecedentes de enfermedades autoinmunes</label>
+                                    <textarea class="form-control" id="antecedentesAutoinmunes" name="antecedentesAutoinmunes" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-pills me-2"></i>3.3 Medicación Actual</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="tablaMedicamentos">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Medicamento</th>
+                                                    <th>Dosis</th>
+                                                    <th>Frecuencia</th>
+                                                    <th>Propósito</th>
+                                                    <th>Acción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="5" class="text-center">No hay medicamentos registrados</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" id="btnAgregarMedicamento">
+                                        <i class="fas fa-plus me-1"></i> Agregar medicamento
+                                    </button>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="adherenciaTratamiento" class="form-label">Adherencia al tratamiento farmacológico</label>
+                                    <select class="form-select" id="adherenciaTratamiento" name="adherenciaTratamiento">
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Buena">Buena</option>
+                                        <option value="Regular">Regular</option>
+                                        <option value="Mala">Mala</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="efectosSecundarios" class="form-label">Efectos secundarios reportados</label>
+                                    <textarea class="form-control" id="efectosSecundarios" name="efectosSecundarios" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-allergies me-2"></i>3.4 Alergias e Hipersensibilidades</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="alergiasMedicamentos" class="form-label">Medicamentos</label>
+                                    <textarea class="form-control" id="alergiasMedicamentos" name="alergiasMedicamentos" rows="2"></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="alergiasAlimentos" class="form-label">Alimentos</label>
+                                    <textarea class="form-control" id="alergiasAlimentos" name="alergiasAlimentos" rows="2"></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="alergiasAmbientales" class="form-label">Ambientales</label>
+                                    <textarea class="form-control" id="alergiasAmbientales" name="alergiasAmbientales" rows="2"></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="reaccionesPrevias" class="form-label">Reacciones previas</label>
+                                    <textarea class="form-control" id="reaccionesPrevias" name="reaccionesPrevias" rows="2"></textarea>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <label class="form-label">Alergias a materiales de uso kinesiológico</label>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="alergiaLatex" name="alergiasKinesio" value="Látex">
+                                                <label class="form-check-label" for="alergiaLatex">Látex</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="alergiaAdhesivos" name="alergiasKinesio" value="Adhesivos">
+                                                <label class="form-check-label" for="alergiaAdhesivos">Adhesivos</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="alergiaGeles" name="alergiasKinesio" value="Geles">
+                                                <label class="form-check-label" for="alergiaGeles">Geles</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="alergiaAceites" name="alergiasKinesio" value="Aceites">
+                                                <label class="form-check-label" for="alergiaAceites">Aceites</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="alergiaOtro" name="alergiasKinesio" value="Otro">
+                                                <label class="form-check-label" for="alergiaOtro">Otro</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-secondary btn-lg" data-bs-toggle="pill" data-bs-target="#paso2">
+                                <i class="fas fa-arrow-left me-2"></i> Anterior
+                            </button>
+                            <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="pill" data-bs-target="#paso4">
+                                Siguiente <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Paso 4: Hábitos y Estilo de Vida -->
+                    <div class="tab-pane fade" id="paso4">
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-utensils me-2"></i>4.1 Hábitos Nutricionales</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="tipoDieta" class="form-label">Tipo de dieta</label>
+                                    <input type="text" class="form-control" id="tipoDieta" name="tipoDieta">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="consumoAgua" class="form-label">Consumo de agua</label>
+                                    <input type="text" class="form-control" id="consumoAgua" name="consumoAgua">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="suplementos" class="form-label">Suplementos</label>
+                                    <input type="text" class="form-control" id="suplementos" name="suplementos">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="restriccionesAlimentarias" class="form-label">Restricciones alimentarias</label>
+                                    <input type="text" class="form-control" id="restriccionesAlimentarias" name="restriccionesAlimentarias">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-smoking me-2"></i>4.2 Hábitos Tóxicos</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="consumoTabaco" class="form-label">Consumo de tabaco</label>
+                                    <input type="text" class="form-control" id="consumoTabaco" name="consumoTabaco">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="consumoAlcohol" class="form-label">Consumo de alcohol</label>
+                                    <input type="text" class="form-control" id="consumoAlcohol" name="consumoAlcohol">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="consumoDrogas" class="form-label">Consumo de drogas</label>
+                                    <input type="text" class="form-control" id="consumoDrogas" name="consumoDrogas">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-running me-2"></i>4.3 Actividad Física y Deportiva</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="practicaDeportes" class="form-label">Práctica de deportes</label>
+                                    <input type="text" class="form-control" id="practicaDeportes" name="practicaDeportes">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="frecuenciaDeporte" class="form-label">Frecuencia</label>
+                                    <select class="form-select" id="frecuenciaDeporte" name="frecuenciaDeporte">
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Diaria">Diaria</option>
+                                        <option value="4-6 veces/semana">4-6 veces/semana</option>
+                                        <option value="2-3 veces/semana">2-3 veces/semana</option>
+                                        <option value="1 vez/semana">1 vez/semana</option>
+                                        <option value="Ocasional">Ocasional</option>
+                                        <option value="Nunca">Nunca</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="intensidadDeporte" class="form-label">Intensidad</label>
+                                    <select class="form-select" id="intensidadDeporte" name="intensidadDeporte">
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Leve">Leve</option>
+                                        <option value="Moderada">Moderada</option>
+                                        <option value="Intensa">Intensa</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="duracionDeporte" class="form-label">Duración promedio (minutos)</label>
+                                    <input type="number" class="form-control" id="duracionDeporte" name="duracionDeporte">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="lesionesDeportivas" class="form-label">Historial de lesiones deportivas</label>
+                                    <textarea class="form-control" id="lesionesDeportivas" name="lesionesDeportivas" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-bed me-2"></i>4.4 Patrón de Sueño</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="horasSueno" class="form-label">Horas de sueño</label>
+                                    <input type="number" class="form-control" id="horasSueno" name="horasSueno">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="calidadSueno" class="form-label">Calidad del sueño</label>
+                                    <select class="form-select" id="calidadSueno" name="calidadSueno">
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Buena">Buena</option>
+                                        <option value="Regular">Regular</option>
+                                        <option value="Mala">Mala</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="problemasSueno" class="form-label">Problemas de sueño</label>
+                                    <input type="text" class="form-control" id="problemasSueno" name="problemasSueno">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-users me-2"></i>4.5 Entorno Social</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label for="descripcionHogar" class="form-label">Descripción del hogar</label>
+                                    <textarea class="form-control" id="descripcionHogar" name="descripcionHogar" rows="2"></textarea>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label">Accesibilidad</label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="accEscaleras" name="accesibilidad" value="Escaleras">
+                                                <label class="form-check-label" for="accEscaleras">Escaleras</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="accRampas" name="accesibilidad" value="Rampas">
+                                                <label class="form-check-label" for="accRampas">Rampas</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="accAscensor" name="accesibilidad" value="Ascensor">
+                                                <label class="form-check-label" for="accAscensor">Ascensor</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="accBanoAdaptado" name="accesibilidad" value="Baño adaptado">
+                                                <label class="form-check-label" for="accBanoAdaptado">Baño adaptado</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="accOtro" name="accesibilidad" value="Otro">
+                                                <label class="form-check-label" for="accOtro">Otro</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="barrerasArquitectonicas" class="form-label">Barreras arquitectónicas</label>
+                                    <textarea class="form-control" id="barrerasArquitectonicas" name="barrerasArquitectonicas" rows="2"></textarea>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="redApoyo" class="form-label">Red de apoyo social y familiar</label>
+                                    <textarea class="form-control" id="redApoyo" name="redApoyo" rows="2"></textarea>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="nivelEstres" class="form-label">Nivel de estrés percibido</label>
+                                    <select class="form-select" id="nivelEstres" name="nivelEstres">
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Bajo">Bajo</option>
+                                        <option value="Moderado">Moderado</option>
+                                        <option value="Alto">Alto</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-secondary btn-lg" data-bs-toggle="pill" data-bs-target="#paso3">
+                                <i class="fas fa-arrow-left me-2"></i> Anterior
+                            </button>
+                            <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="pill" data-bs-target="#paso5">
+                                Siguiente <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Paso 5: Consentimiento -->
+                    <div class="tab-pane fade" id="paso5">
+                        <div class="form-section">
+                            <h4 class="form-section-title"><i class="fas fa-file-signature me-2"></i>11. Consentimiento y Autorización</h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="consentimientoInformado" name="consentimientoInformado" value="true" required>
+                                        <label class="form-check-label" for="consentimientoInformado">
+                                            <strong>Consentimiento informado:</strong> El paciente ha sido informado sobre el procedimiento kinesiológico, sus beneficios, riesgos y alternativas.
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="autorizacionTratamiento" name="autorizacionTratamiento" value="true" required>
+                                        <label class="form-check-label" for="autorizacionTratamiento">
+                                            <strong>Autorización de tratamiento:</strong> El paciente autoriza al profesional a realizar el tratamiento kinesiológico apropiado según su criterio profesional.
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="politicaPrivacidad" name="politicaPrivacidad" value="true" required>
+                                        <label class="form-check-label" for="politicaPrivacidad">
+                                            <strong>Política de privacidad:</strong> El paciente ha sido informado sobre la política de privacidad y manejo de datos personales.
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="manejoDatos" name="manejoDatos" value="true" required>
+                                        <label class="form-check-label" for="manejoDatos">
+                                            <strong>Manejo de datos personales:</strong> El paciente autoriza el manejo de sus datos personales con fines de tratamiento y seguimiento clínico.
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="registroFoto" name="registroFoto" value="true">
+                                        <label class="form-check-label" for="registroFoto">
+                                            <strong>Autorización para registro fotográfico/video:</strong> El paciente autoriza la toma de fotografías y/o videos con fines clínicos.
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="contactoSeguimiento" name="contactoSeguimiento" value="true">
+                                        <label class="form-check-label" for="contactoSeguimiento">
+                                            <strong>Autorización para contacto de seguimiento:</strong> El paciente autoriza ser contactado para seguimiento de su evolución.
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <label for="riesgosInformados" class="form-label">Riesgos específicos informados</label>
+                                    <textarea class="form-control" id="riesgosInformados" name="riesgosInformados" rows="2"></textarea>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <label for="alternativasTerapeuticas" class="form-label">Alternativas terapéuticas discutidas</label>
+                                    <textarea class="form-control" id="alternativasTerapeuticas" name="alternativasTerapeuticas" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-secondary btn-lg" data-bs-toggle="pill" data-bs-target="#paso4">
+                                <i class="fas fa-arrow-left me-2"></i> Anterior
+                            </button>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-save me-2"></i> Guardar Paciente
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para agregar medicamento -->
+    <div class="modal fade" id="modalMedicamento" tabindex="-1" aria-labelledby="modalMedicamentoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalMedicamentoLabel">Agregar Medicamento</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formMedicamento">
+                        <div class="mb-3">
+                            <label for="nombreMedicamento" class="form-label">Nombre del medicamento</label>
+                            <input type="text" class="form-control" id="nombreMedicamento" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dosisMedicamento" class="form-label">Dosis</label>
+                            <input type="text" class="form-control" id="dosisMedicamento" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="frecuenciaMedicamento" class="form-label">Frecuencia</label>
+                            <input type="text" class="form-control" id="frecuenciaMedicamento" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="viaMedicamento" class="form-label">Vía de administración</label>
+                            <select class="form-select" id="viaMedicamento">
+                                <option value="" selected disabled>Seleccionar...</option>
+                                <option value="Oral">Oral</option>
+                                <option value="Intravenosa">Intravenosa</option>
+                                <option value="Intramuscular">Intramuscular</option>
+                                <option value="Subcutánea">Subcutánea</option>
+                                <option value="Tópica">Tópica</option>
+                                <option value="Inhalada">Inhalada</option>
+                                <option value="Otra">Otra</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="propositoMedicamento" class="form-label">Propósito</label>
+                            <input type="text" class="form-control" id="propositoMedicamento">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btnGuardarMedicamento">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    
+    <!-- Configuración de Firebase y scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/pacientes.js"></script>
+</body>
+</html>
