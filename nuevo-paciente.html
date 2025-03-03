@@ -604,7 +604,157 @@
                             </button>
                         </div>
                     </div>
-                    
+
+                    <!-- Acrónimo SINSS -->
+<div class="form-section">
+    <h4 class="form-section-title"><i class="fas fa-list-alt me-2"></i>Acrónimo SINSS</h4>
+    
+    <div class="row g-3">
+        <div class="col-md-12">
+            <label for="sinssSeveridad" class="form-label">Severidad del dolor/síntoma</label>
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <input type="range" class="form-range eva-slider" id="sinssSeveridad" name="sinssSeveridad" min="0" max="10" step="1" value="0">
+                    <div class="d-flex justify-content-between">
+                        <span>0 - Sin dolor</span>
+                        <span id="valorEvaSinss">0</span>
+                        <span>10 - Máximo dolor</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <select class="form-select" id="sinssImpacto" name="sinssImpacto">
+                        <option value="" selected disabled>Impacto funcional...</option>
+                        <option value="Sin limitación">Sin limitación funcional</option>
+                        <option value="Limitación leve">Limitación funcional leve</option>
+                        <option value="Limitación moderada">Limitación funcional moderada</option>
+                        <option value="Limitación severa">Limitación funcional severa</option>
+                        <option value="Incapacidad total">Incapacidad total</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-12">
+            <label for="sinssIrradiacion" class="form-label">Irradiación o localización</label>
+            <textarea class="form-control" id="sinssIrradiacion" name="sinssIrradiacion" rows="2" placeholder="Describa la localización exacta y si existe irradiación del dolor/síntoma"></textarea>
+        </div>
+        
+        <div class="col-md-12">
+            <label for="sinssNaturaleza" class="form-label">Naturaleza del dolor/síntoma</label>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="naturaPunzante" name="sinssNaturaleza" value="Punzante">
+                        <label class="form-check-label" for="naturaPunzante">Punzante</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="naturaQuemante" name="sinssNaturaleza" value="Quemante">
+                        <label class="form-check-label" for="naturaQuemante">Quemante</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="naturaOpresivo" name="sinssNaturaleza" value="Opresivo">
+                        <label class="form-check-label" for="naturaOpresivo">Opresivo</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="naturaPulsatil" name="sinssNaturaleza" value="Pulsátil">
+                        <label class="form-check-label" for="naturaPulsatil">Pulsátil</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="naturaElectrico" name="sinssNaturaleza" value="Eléctrico">
+                        <label class="form-check-label" for="naturaElectrico">Eléctrico</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="naturaSordo" name="sinssNaturaleza" value="Sordo">
+                        <label class="form-check-label" for="naturaSordo">Sordo</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="naturaHormigueo" name="sinssNaturaleza" value="Hormigueo">
+                        <label class="form-check-label" for="naturaHormigueo">Hormigueo</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="naturaEntumecimiento" name="sinssNaturaleza" value="Entumecimiento">
+                        <label class="form-check-label" for="naturaEntumecimiento">Entumecimiento</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="naturaOtro" name="sinssNaturaleza" value="Otro">
+                        <label class="form-check-label" for="naturaOtro">Otro</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-12">
+            <label for="sinssSintomas" class="form-label">Síntomas asociados</label>
+            <textarea class="form-control" id="sinssSintomas" name="sinssSintomas" rows="2" placeholder="Describa otros síntomas que acompañan al dolor principal"></textarea>
+        </div>
+        
+        <div class="col-md-12">
+            <label class="form-label">Signos y factores</label>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="sinssAgravantes" class="form-label">Factores agravantes</label>
+                    <textarea class="form-control" id="sinssAgravantes" name="sinssAgravantes" rows="2" placeholder="¿Qué empeora el dolor/síntoma?"></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label for="sinssAliviantes" class="form-label">Factores aliviantes</label>
+                    <textarea class="form-control" id="sinssAliviantes" name="sinssAliviantes" rows="2" placeholder="¿Qué mejora el dolor/síntoma?"></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-12">
+            <label for="sinssPatron" class="form-label">Patrón temporal</label>
+            <div class="row">
+                <div class="col-md-4">
+                    <select class="form-select" id="sinssPatron" name="sinssPatron">
+                        <option value="" selected disabled>Seleccionar patrón...</option>
+                        <option value="Constante">Constante</option>
+                        <option value="Intermitente">Intermitente</option>
+                        <option value="Fluctuante">Fluctuante</option>
+                        <option value="Progresivo">Progresivo</option>
+                        <option value="Regresivo">Regresivo</option>
+                        <option value="Cíclico">Cíclico</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="sinssVariacion" name="sinssVariacion">
+                        <option value="" selected disabled>Variación diurna...</option>
+                        <option value="Peor en la mañana">Peor en la mañana</option>
+                        <option value="Peor en la tarde">Peor en la tarde</option>
+                        <option value="Peor en la noche">Peor en la noche</option>
+                        <option value="Sin variación">Sin variación diurna</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="sinssDuracion" name="sinssDuracion">
+                        <option value="" selected disabled>Duración del episodio...</option>
+                        <option value="Segundos">Segundos</option>
+                        <option value="Minutos">Minutos</option>
+                        <option value="Horas">Horas</option>
+                        <option value="Días">Días</option>
+                        <option value="Constante">Constante</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
                     <!-- Pestaña 3: Historia Médica -->
                     <div class="tab-pane fade" id="historiaMedica" role="tabpanel" aria-labelledby="historiaMedica-tab">
                         <div class="form-section">
