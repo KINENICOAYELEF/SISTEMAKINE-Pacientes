@@ -1407,7 +1407,13 @@
                     agregarMedicamento();
                 });
             }
-            
+            // Manejar slider EVA para SINSS
+            const sliderSeveridad = document.getElementById('sinssSeveridad');
+            if (sliderSeveridad) {
+                sliderSeveridad.addEventListener('input', function() {
+                    document.getElementById('valorEvaSinss').textContent = this.value;
+                });
+            }
             // Manejar envío del formulario
             const formNuevoPaciente = document.getElementById('formNuevoPaciente');
             if (formNuevoPaciente) {
