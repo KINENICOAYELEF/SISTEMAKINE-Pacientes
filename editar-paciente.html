@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Paciente - SISTEMAKINE</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Barra lateral -->
+        <div class="sidebar">
+            <div class="sidebar-heading bg-primary text-white py-3">
+                <i class="fas fa-heartbeat me-2"></i>Sistema Kinesiológico
+            </div>
+            
+            <div class="list-group list-group-flush">
+                <a href="dashboard.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-home me-2"></i>Panel Principal
+                </a>
+                
+                <div class="sidebar-category">PACIENTES</div>
+                
+                <a href="nuevo-paciente.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-user-plus me-2"></i>Formulario de Ingreso
+                </a>
+                <a href="listado-pacientes.html" class="list-group-item list-group-item-action active">
+                    <i class="fas fa-users me-2"></i>Listado de Pacientes
+                </a>
+                
+                <div class="sidebar-category">EVALUACIÓN</div>
+                
+                <a href="diagnostico.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-stethoscope me-2"></i>Diagnóstico Kinesiológico
+                </a>
+                <a href="plan-tratamiento.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-clipboard-list me-2"></i>Plan de Tratamiento
+                </a>
+                <a href="evoluciones.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-chart-line me-2"></i>Evoluciones
+                </a>
+                
+                <div class="sidebar-category">ANÁLISIS</div>
+                
+                <a href="dashboard-analisis.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-chart-bar me-2"></i>Dashboard y Análisis
+                </a>
+            </div>
+            
+            <div class="mt-auto p-3 border-top">
+                <button id="btnCerrarSesion" class="btn btn-danger w-100">
+                    <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                </button>
+            </div>
+        </div>
+        
+        <!-- Contenido principal -->
+        <div class="main-content w-100">
+            <!-- Cabecera con usuario -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="dashboard.html">Inicio</a></li>
+                        <li class="breadcrumb-item"><a href="listado-pacientes.html">Pacientes</a></li>
+                        <li class="breadcrumb-item"><a href="#" id="breadcrumbPaciente">Paciente</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Editar Paciente</li>
+                    </ol>
+                </nav>
+                
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle me-2"></i><span id="nombreUsuario">Kinesiólogo</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="perfil.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="configuracion.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#" id="linkCerrarSesion"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Información del paciente (resumen) -->
+            <div class="card shadow-sm mb-4" id="infoPaciente">
+                <div class="card-body p-0">
+                    <div class="p-4 text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <p class="mt-2">Cargando información del paciente...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Alerta de guardado -->
+            <div class="alert alert-success alert-dismissible fade show d-none" id="alertaGuardado" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong>¡Paciente actualizado correctamente!</strong> Los cambios han sido guardados.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <!-- Alerta de error -->
+            <div class="alert alert-danger alert-dismissible fade show d-none" id="alertaError" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <strong>¡Error al guardar!</strong> <span id="mensajeError"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <!-- Formulario de edición -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-user-edit me-2"></i>Editar Información del Paciente</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Navegación por pestañas -->
+                    <ul class="nav nav-pills mb-4" id="tabEditar" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="datos-personales-tab" data-bs-toggle="pill" data-bs-target="#datos-personales" type="button" role="tab" aria-controls="datos-personales" aria-selected="true">
+                                <i class="fas fa-id-card me-2"></i>Datos Personales
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="contacto-tab" data-bs-toggle="pill" data-bs-target="#contacto" type="button" role="tab" aria-controls="contacto" aria-selected="false">
+                                <i class="fas fa-address-book me-2"></i>Contacto
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="motivo-consulta-tab" data-bs-toggle="pill" data-bs-target="#motivo-consulta" type="button" role="tab" aria-controls="motivo-consulta" aria-selected="false">
+                                <i class="fas fa-clipboard me-2"></i>Motivo de Consulta
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="historia-medica-tab" data-bs-toggle="pill" data-bs-target="#historia-medica" type="button" role="tab" aria-controls="historia-medica" aria-selected="false">
+                                <i class="fas fa-notes-medical me-2"></i>Historia Médica
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="habitos-tab" data-bs-toggle="pill" data-bs-target="#habitos" type="button" role="tab" aria-controls="habitos" aria-selected="false">
+                                <i class="fas fa-heartbeat me-2"></i>Hábitos
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <form id="formEditarPaciente">
+                        <div class="tab-content">
+                            <!-- Datos Personales -->
+                            <div class="tab-pane fade show active" id="datos-personales" role="tabpanel" aria-labelledby="datos-personales-tab">
+                                <div class="form-section">
+                                    <h4 class="form-section-title"><i class="fas fa-id-card me-2"></i>1.1 Datos Personales</h4>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="nombre" class="form-label">Nombre completo *</label>
+                                            <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="rut" class="form-label">Documento de identidad (RUT/Pasaporte) *</label>
+                                            <input type="text" class="form-control" id="rut" name="rut" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="fechaNacimiento" class="form-label">Fecha de nacimiento *</label>
+                                            <input type="date" class="form-control" id="fechaNacimiento" name="fechaNacimiento" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="edad" class="form-label">Edad</label>
+                                            <input type="number" class="form-control" id="edad" readonly>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="genero" class="form-label">Género *</label>
+                                            <select class="form-select" id="genero" name="genero" required>
+                                                <option value="" selected disabled>Seleccionar...</option>
+                                                <option value="Masculino">Masculino</option>
+                                                <option value="Femenino">Femenino</option>
+                                                <option value="No binario">No binario</option>
+                                                <option value="Prefiero no especificar">Prefiero no especificar</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="estadoCivil" class="form-label">Estado civil</label>
+                                            <select class="form-select" id="estadoCivil" name="estadoCivil">
+                                                <option value="" selected disabled>Seleccionar...</option>
+                                                <option value="Soltero/a">Soltero/a</option>
+                                                <option value="Casado/a">Casado/a</option>
+                                                <option value="Divorciado/a">Divorciado/a</option>
+                                                <option value="Viudo/a">Viudo/a</option>
+                                                <option value="Unión libre">Unión libre</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="nacionalidad" class="form-label">Nacionalidad</label>
+                                            <input type="text" class="form-control" id="nacionalidad" name="nacionalidad">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="estado" class="form-label">Estado del paciente *</label>
+                                            <select class="form-select" id="estado" name="estado" required>
+                                                <option value="" selected disabled>Seleccionar...</option>
+                                                <option value="Activo">Activo</option>
+                                                <option value="Inactivo">Inactivo</option>
+                                                <option value="En espera">En espera</option>
+                                                <option value="Alta">Alta</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-section">
+                                    <h4 class="form-section-title"><i class="fas fa-hand-point-up me-2"></i>1.5 Lateralidad</h4>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="dominanciaManual" class="form-label">Dominancia manual</label>
+                                            <select class="form-select" id="dominanciaManual" name="dominanciaManual">
+                                                <option value="" selected disabled>Seleccionar...</option>
+                                                <option value="Diestro">Diestro</option>
+                                                <option value="Zurdo">Zurdo</option>
+                                                <option value="Ambidiestro">Ambidiestro</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="dominanciaPodal" class="form-label">Dominancia podal</label>
+                                            <select class="form-select" id="dominanciaPodal" name="dominanciaPodal">
+                                                <option value="" selected disabled>Seleccionar...</option>
+                                                <option value="Derecha">Derecha</option>
+                                                <option value="Izquierda">Izquierda</option>
+                                                <option value="Ambas">Ambas</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Información de Contacto -->
+                            <div class="tab-pane fade" id="contacto" role="tabpanel" aria-labelledby="contacto-tab">
+                                <div class="form-section">
+                                    <h4 class="form-section-title"><i class="fas fa-address-book me-2"></i>1.2 Información de Contacto</h4>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-12">
+                                            <label for="direccion" class="form-label">Dirección completa</label>
+                                            <input type="text" class="form-control" id="direccion" name="direccion">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="telefonoPersonal" class="form-label">Teléfono personal *</label>
+                                            <input type="tel" class="form-control" id="telefonoPersonal" name="telefonoPersonal" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="telefonoTrabajo" class="form-label">Teléfono trabajo</label>
+                                            <input type="tel" class="form-control" id="telefonoTrabajo" name="telefonoTrabajo">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="email" class="form-label">Correo electrónico</label>
+                                            <input type="email" class="form-control" id="email" name="email">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-section">
+                                    <h4 class="form-section-title"><i class="fas fa-briefcase me-2"></i>1.3 Datos Sociolaborales</h4>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <label for="nivelEducacional" class="form-label">Nivel educacional</label>
+                                            <select class="form-select" id="nivelEducacional" name="nivelEducacional">
+                                                <option value="" selected disabled>Seleccionar...</option>
+                                                <option value="Básica">Básica</option>
+                                                <option value="Media">Media</option>
+                                                <option value="Técnica">Técnica</option>
+                                                <option value="Universitaria">Universitaria</option>
+                                                <option value="Postgrado">Postgrado</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="ocupacion" class="form-label">Ocupación actual</label>
+                                            <input type="text" class="form-control" id="ocupacion" name="ocupacion">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="tipoTrabajo" class="form-label">Tipo de trabajo</label>
+                                            <select class="form-select" id="tipoTrabajo" name="tipoTrabajo">
+                                                <option value="" selected disabled>Seleccionar...</option>
+                                                <option value="Físico">Físico</option>
+                                                <option value="Sedentario">Sedentario</option>
+                                                <option value="Mixto">Mixto</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="horarioLaboral" class="form-label">Horario laboral</label>
+                                            <input type="text" class="form-control" id="horarioLaboral" name="horarioLaboral">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="condicionesErgonomicas" class="form-label">Condiciones ergonómicas del puesto</label>
+                                            <input type="text" class="form-control" id="condicionesErgonomicas" name="condicionesErgonomicas">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="nivelActividadFisica" class="form-label">Nivel de actividad física</label>
+                                            <select class="form-select" id="nivelActividadFisica" name="nivelActividadFisica">
+                                                <option value="" selected disabled>Seleccionar...</option>
+                                                <option value="Sedentario">Sedentario</option>
+                                                <option value="Ligero">Ligero</option>
+                                                <option value="Moderado">Moderado</option>
+                                                <option value="Intenso">Intenso</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-section">
+                                    <h4 class="form-section-title"><i class="fas fa-ambulance me-2"></i>1.4 Información de Emergencia</h4>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <label for="contactoEmergencia" class="form-label">Contacto de emergencia</label>
+                                            <input type="text" class="form-control" id="contactoEmergencia" name="contactoEmergencia">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="parentesco" class="form-label">Parentesco</label>
+                                            <input type="text" class="form-control" id="parentesco" name="parentesco">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="telefonoEmergencia" class="form-label">Teléfonos de contacto</label>
+                                            <input type="tel" class="form-control" id="telefonoEmergencia" name="telefonoEmergencia">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="sistemaSalud" class="form-label">Sistema de salud/seguro médico</label>
+                                            <input type="text" class="form-control" id="sistemaSalud" name="sistemaSalud">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Motivo de Consulta -->
+                            <div class="tab-pane fade" id="motivo-consulta" role="tabpanel" aria-labelledby="motivo-consulta-tab">
+                                <div class="form-section">
+                                    <h4 class="form-section-title"><i class="fas fa-file-medical me-2"></i>2.1 Derivación</h4>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="diagnostico" class="form-label">Diagnóstico actual</label>
+                                            <input type="text" class="form-control" id="diagnostico" name="diagnostico">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="profesionalDeriva" class="form-label">Profesional que deriva</label>
+                                            <input type="text" class="form-control" id="profesionalDeriva" name="motivoConsulta.profesionalDeriva">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="especialidad" class="form-label">Especialidad</label>
+                                            <select class="form-select" id="especialidad" name="motivoConsulta.especialidad">
+                                                <option value="" selected disabled>Seleccionar...</option>
+                                                <option value="Medicina General">Medicina General</option>
+                                                <option value="Traumatología">Traumatología</option>
+                                                <option value="Neurología">Neurología</option>
+                                                <option value="Reumatología">Reumatología</option>
+                                                <option value="Medicina Deportiva">Medicina Deportiva</option>
+                                                <option value="Geriatría">Geriatría</option>
+                                                <option value="Fisiatría">Fisiatría</option>
+                                                <option value="Otro">Otro</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="diagnosticoMedico" class="form-label">Diagnóstico médico inicial</label>
+                                            <input type="text" class="form-control" id="diagnosticoMedico" name="motivoConsulta.diagnosticoMedico">
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label for="motivoConsulta" class="form-label">Motivo de consulta específico</label>
+                                            <textarea class="form-control" id="motivoConsulta" name="motivoConsulta.motivoConsulta" rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-section">
+                                    <h4 class="form-section-title"><i class="fas fa-list-alt me-2"></i>2.3 Expectativas del Paciente</h4>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-12">
+                                            <label for="objetivosCorto" class="form-label">Objetivos a corto plazo</label>
+                                            <textarea class="form-control" id="objetivosCorto" name="motivoConsulta.objetivosCorto" rows="2"></textarea>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label for="objetivosMedio" class="form-label">Objetivos a mediano plazo</label>
+                                            <textarea class="form-control" id="objetivosMedio" name="motivoConsulta.objetivosMedio" rows="2"></textarea>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label for="objetivosLargo" class="form-label">Objetivos a largo plazo</label>
+                                            <textarea class="form-control" id="objetivosLargo" name="motivoConsulta.objetivosLargo" rows="2"></textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="expectativasRecuperacion" class="form-label">Expectativas de recuperación</label>
+                                            <select class="form-select" id="expectativasRecuperacion" name="motivoConsulta.expectativasRecuperacion">
+                                                <option value="" selected disabled>Seleccionar...</option>
+                                                <option value="Recuperación completa">Recuperación completa</option>
+                                                <option value="Mejora significativa">Mejora significativa</option>
+                                                <option value="Mejora parcial">Mejora parcial</option>
+                                                <option value="Control de síntomas">Control de síntomas</option>
+                                                <option value="Sin expectativas claras">Sin expectativas claras</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="nivelCompromiso" class="form-label">Nivel de compromiso con el tratamiento</label>
+                                            <select class="form-select" id="nivelCompromiso" name="motivoConsulta.nivelCompromiso">
+                                                <option value="" selected disabled>Seleccionar...</option>
+                                                <option value="Alto">Alto</option>
+                                                <option value="Medio">Medio</option>
+                                                <option value="Bajo">Bajo</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Historia Médica -->
+                            <div class="tab-pane fade" id="historia-medica" role="tabpanel" aria-labelledby="historia-medica-tab">
+                                <div class="form-section">
+                                    <h4 class="form-section-title"><i class="fas fa-file-medical-alt me-2"></i>3.1 Antecedentes Personales</h4>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-12">
+                                            <label class="form-label">Enfermedades crónicas</label>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="enfHipertension" name="historiaMedica.enfermedadesCronicas" value="Hipertensión">
+                                                        <label class="form-check-label" for="enfHipertension">Hipertensión</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="enfDiabetes" name="historiaMedica.enfermedadesCronicas" value="Diabetes">
+                                                        <label class="form-check-label" for="enfDiabetes">Diabetes</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="enfAsma" name="historiaMedica.enfermedadesCronicas" value="Asma">
+                                                        <label class="form-check-label" for="enfAsma">Asma</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="enfEPOC" name="historiaMedica.enfermedadesCronicas" value="EPOC">
+                                                        <label class="form-check-label" for="enfEPOC">EPOC</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="enfArtritis" name="historiaMedica.enfermedadesCronicas" value="Artritis">
+                                                        <label class="form-check-label" for="enfArtritis">Artritis</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="enfOsteoporosis" name="historiaMedica.enfermedadesCronicas" value="Osteoporosis">
+                                                        <label class="form-check-label" for="enfOsteoporosis">Osteoporosis</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="enfCancer" name="historiaMedica.enfermedadesCronicas" value="Cáncer">
+                                                        <label class="form-check-label" for="enfCancer">Cáncer</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="enfCardiaca" name="historiaMedica.enfermedadesCronicas" value="Enfermedad cardíaca">
+                                                        <label class="form-check-label" for="enfCardiaca">Enfermedad cardíaca</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="alergiasMedicamentos" class="form-label">Alergias a medicamentos</label>
+                                            <textarea class="form-control" id="alergiasMedicamentos" name="historiaMedica.alergiasMedicamentos" rows="2"></textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="cirugiasPrevias" class="form-label">Cirugías previas</label>
+                                            <textarea class="form-control" id="cirugiasPrevias" name="historiaMedica.cirugiasPrevias" rows="2"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-section">
+                                    <h4 class="form-section-title"><i class="fas fa-pills me-2"></i>3.3 Medicación Actual</h4>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-12">
+                                            <label for="medicamentos" class="form-label">Medicamentos actuales</label>
+                                            <textarea class="form-control" id="medicamentos" name="historiaMedica.medicamentos" rows="3" placeholder="Anote medicamentos, dosis y frecuencia"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Hábitos y Estilo de Vida -->
+                            <div class="tab-pane fade" id="habitos" role="tabpanel" aria-labelledby="habitos-tab">
+                                <div class="form-section">
+                                    <h4 class="form-section-title"><i class="fas fa-utensils me-2"></i>4.1 Hábitos Nutricionales</h4>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="tipoDieta" class="form-label">Tipo de dieta</label>
+                                            <input type="text" class="form-control" id="tipoDieta" name="habitos.tipoDieta">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="consumoAgua" class="form-label">Consumo de agua</label>
+                                            <input type="text" class="form-control" id="consumoAgua" name="habitos.consumoAgua">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-section">
+                                    <h4 class="form-section-title"><i class="fas fa-smoking me-2"></i>4.2 Hábitos Tóxicos</h4>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <label for="consumoTabaco" class="form-label">Consumo de tabaco</label>
+                                            <input type="text" class="form-control" id="consumoTabaco" name="habitos.consumoTabaco">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="consumoAlcohol" class="form-label">Consumo de alcohol</label>
+                                            <input type="text" class="form-control" id="consumoAlcohol" name="habitos.consumoAlcohol">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="consumoDrogas" class="form-label">Consumo de drogas</label>
+                                            <input type="text" class="form-control" id="consumoDrogas" name="habitos.consumoDrogas">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-section">
+                                    <h4 class="form-section-title"><i class="fas fa-running me-2"></i>4.3 Actividad Física y Deportiva</h4>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="practicaDeportes" class="form-label">Práctica de deportes</label>
+                                            <input type="text" class="form-control" id="practicaDeportes" name="habitos.practicaDeportes">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="frecuenciaDeporte" class="form-label">Frecuencia</label>
+                                            <select class="form-select" id="frecuenciaDeporte" name="habitos.frecuenciaDeporte">
+                                                <option value="" selected disabled>Seleccionar...</option>
+                                                <option value="Diaria">Diaria</option>
+                                                <option value="4-6 veces/semana">4-6 veces/semana</option>
+                                                <option value="2-3 veces/semana">2-3 veces/semana</option>
+                                                <option value="1 vez/semana">1 vez/semana</option>
+                                                <option value="Ocasional">Ocasional</option>
+                                                <option value="Nunca">Nunca</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="intensidadDeporte" class="form-label">Intensidad</label>
+                                            <select class="form-select" id="intensidadDeporte" name="habitos.intensidadDeporte">
+                                                <option value="" selected disabled>Seleccionar...</option>
+                                                <option value="Leve">Leve</option>
+                                                <option value="Moderada">Moderada</option>
+                                                <option value="Intensa">Intensa</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="duracionDeporte" class="form-label">Duración promedio (minutos)</label>
+                                            <input type="number" class="form-control" id="duracionDeporte" name="habitos.duracionDeporte">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="lesionesDeportivas" class="form-label">Historial de lesiones deportivas</label>
+                                            <textarea class="form-control" id="lesionesDeportivas" name="habitos.lesionesDeportivas" rows="2"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-section">
+                                    <h4 class="form-section-title"><i class="fas fa-bed me-2"></i>4.4 Patrón de Sueño</h4>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <label for="horasSueno" class="form-label">Horas de sueño</label>
+                                            <input type="number" class="form-control" id="horasSueno" name="habitos.horasSueno">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="calidadSueno" class="form-label">Calidad del sueño</label>
+                                            <select class="form-select" id="calidadSueno" name="habitos.calidadSueno">
+                                                <option value="" selected disabled>Seleccionar...</option>
+                                                <option value="Buena">Buena</option>
+                                                <option value="Regular">Regular</option>
+                                                <option value="Mala">Mala</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="problemasSueno" class="form-label">Problemas de sueño</label>
+                                            <input type="text" class="form-control" id="problemasSueno" name="habitos.problemasSueno">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Botones de acción -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="#" id="btnVolver" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Volver
+                            </a>
+                            <div>
+                                <button type="button" id="btnCancelar" class="btn btn-outline-danger me-2">
+                                    <i class="fas fa-times me-2"></i>Cancelar
+                                </button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save me-2"></i>Guardar Cambios
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    
+    <!-- Configuración de Firebase y scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/pacientes.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtener ID del paciente de la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const pacienteId = urlParams.get('id');
+            
+            if (!pacienteId) {
+                alert('ID de paciente no especificado');
+                window.location.href = 'listado-pacientes.html';
+                return;
+            }
+            
+            // Referencias a elementos DOM
+            const infoPaciente = document.getElementById('infoPaciente');
+            const formEditarPaciente = document.getElementById('formEditarPaciente');
+            const btnVolver = document.getElementById('btnVolver');
+            const btnCancelar = document.getElementById('btnCancelar');
+            const breadcrumbPaciente = document.getElementById('breadcrumbPaciente');
+            const alertaGuardado = document.getElementById('alertaGuardado');
+            const alertaError = document.getElementById('alertaError');
+            const mensajeError = document.getElementById('mensajeError');
+            
+            // Inicialización
+            cargarDatosPaciente();
+            
+            // Eventos
+            formEditarPaciente.addEventListener('submit', function(e) {
+                e.preventDefault();
+                guardarCambios();
+            });
+            
+            btnVolver.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = `ver-paciente.html?id=${pacienteId}`;
+            });
+            
+            btnCancelar.addEventListener('click', function() {
+                window.location.href = `ver-paciente.html?id=${pacienteId}`;
+            });
+            
+            // Calcular edad automáticamente al cambiar fecha de nacimiento
+            document.getElementById('fechaNacimiento').addEventListener('change', function() {
+                calcularEdad();
+            });
+            
+            // Función para cargar datos del paciente
+            function cargarDatosPaciente() {
+                firebase.firestore().collection('pacientes').doc(pacienteId).get()
+                    .then(function(doc) {
+                        if (!doc.exists) {
+                            infoPaciente.querySelector('.card-body').innerHTML = '<div class="alert alert-danger m-4">Paciente no encontrado</div>';
+                            return;
+                        }
+                        
+                        const paciente = doc.data();
+                        
+                        // Actualizar título de la página
+                        document.title = `Editar ${paciente.nombre} - SISTEMAKINE`;
+                        
+                        // Actualizar breadcrumb
+                        breadcrumbPaciente.innerHTML = `<a href="ver-paciente.html?id=${pacienteId}">${paciente.nombre}</a>`;
+                        
+                        // Mostrar información del paciente
+                        mostrarInfoPaciente(paciente);
+                        
+                        // Llenar formulario con datos actuales
+                        llenarFormulario(paciente);
+                    })
+                    .catch(function(error) {
+                        console.error('Error al cargar datos del paciente:', error);
+                        infoPaciente.querySelector('.card-body').innerHTML = '<div class="alert alert-danger m-4">Error al cargar datos del paciente</div>';
+                    });
+            }
+            
+            // Función para mostrar información del paciente
+            function mostrarInfoPaciente(paciente) {
+                const edad = paciente.edad || window.utils.calcularEdad(paciente.fechaNacimiento) || 'No registrada';
+                
+                infoPaciente.querySelector('.card-body').innerHTML = `
+                    <div class="row align-items-center">
+                        <div class="col-md-2 text-center">
+                            <div class="avatar bg-primary text-white mx-auto" style="width: 80px; height: 80px; font-size: 2rem; display: flex; align-items: center; justify-content: center;">
+                                ${window.utils.obtenerIniciales(paciente.nombre)}
+                            </div>
+                        </div>
+                        <div class="col-md-10">
+                            <h4 class="mb-1">${paciente.nombre}</h4>
+                            <p class="mb-0 text-muted">
+                                <i class="fas fa-id-card me-1"></i> ${paciente.rut || 'Sin RUT'} | 
+                                <i class="fas fa-birthday-cake me-1"></i> ${edad} años | 
+                                <i class="fas fa-venus-mars me-1"></i> ${paciente.genero || 'No especificado'}
+                            </p>
+                            <p class="mb-0 text-muted">
+                                <i class="fas fa-phone me-1"></i> ${paciente.telefonoPersonal || 'No registrado'} | 
+                                <i class="fas fa-envelope me-1"></i> ${paciente.email || 'No registrado'}
+                            </p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Función para llenar el formulario con los datos actuales
+            function llenarFormulario(paciente) {
+                // Datos personales
+                document.getElementById('nombre').value = paciente.nombre || '';
+                document.getElementById('rut').value = paciente.rut || '';
+                
+                if (paciente.fechaNacimiento) {
+                    document.getElementById('fechaNacimiento').value = window.utils.formatearFechaInput(paciente.fechaNacimiento);
+                    calcularEdad();
+                }
+                
+                document.getElementById('genero').value = paciente.genero || '';
+                document.getElementById('estadoCivil').value = paciente.estadoCivil || '';
+                document.getElementById('nacionalidad').value = paciente.nacionalidad || '';
+                document.getElementById('estado').value = paciente.estado || 'Activo';
+                
+                // Lateralidad
+                document.getElementById('dominanciaManual').value = paciente.dominanciaManual || '';
+                document.getElementById('dominanciaPodal').value = paciente.dominanciaPodal || '';
+                
+                // Información de contacto
+                document.getElementById('direccion').value = paciente.direccion || '';
+                document.getElementById('telefonoPersonal').value = paciente.telefonoPersonal || '';
+                document.getElementById('telefonoTrabajo').value = paciente.telefonoTrabajo || '';
+                document.getElementById('email').value = paciente.email || '';
+                
+                // Datos sociolaborales
+                document.getElementById('nivelEducacional').value = paciente.nivelEducacional || '';
+                document.getElementById('ocupacion').value = paciente.ocupacion || '';
+                document.getElementById('tipoTrabajo').value = paciente.tipoTrabajo || '';
+                document.getElementById('horarioLaboral').value = paciente.horarioLaboral || '';
+                document.getElementById('condicionesErgonomicas').value = paciente.condicionesErgonomicas || '';
+                document.getElementById('nivelActividadFisica').value = paciente.nivelActividadFisica || '';
+                
+                // Información de emergencia
+                document.getElementById('contactoEmergencia').value = paciente.contactoEmergencia || '';
+                document.getElementById('parentesco').value = paciente.parentesco || '';
+                document.getElementById('telefonoEmergencia').value = paciente.telefonoEmergencia || '';
+                document.getElementById('sistemaSalud').value = paciente.sistemaSalud || '';
+                
+                // Motivo de consulta
+                document.getElementById('diagnostico').value = paciente.diagnostico || '';
+                
+                if (paciente.motivoConsulta) {
+                    document.getElementById('profesionalDeriva').value = paciente.motivoConsulta.profesionalDeriva || '';
+                    document.getElementById('especialidad').value = paciente.motivoConsulta.especialidad || '';
+                    document.getElementById('diagnosticoMedico').value = paciente.motivoConsulta.diagnosticoMedico || '';
+                    document.getElementById('motivoConsulta').value = paciente.motivoConsulta.motivoConsulta || '';
+                    document.getElementById('objetivosCorto').value = paciente.motivoConsulta.objetivosCorto || '';
+                    document.getElementById('objetivosMedio').value = paciente.motivoConsulta.objetivosMedio || '';
+                    document.getElementById('objetivosLargo').value = paciente.motivoConsulta.objetivosLargo || '';
+                    document.getElementById('expectativasRecuperacion').value = paciente.motivoConsulta.expectativasRecuperacion || '';
+                    document.getElementById('nivelCompromiso').value = paciente.motivoConsulta.nivelCompromiso || '';
+                }
+                
+                // Historia médica
+                if (paciente.historiaMedica) {
+                    // Marcar enfermedades crónicas
+                    if (paciente.historiaMedica.enfermedadesCronicas && paciente.historiaMedica.enfermedadesCronicas.length > 0) {
+                        paciente.historiaMedica.enfermedadesCronicas.forEach(function(enfermedad) {
+                            const checkbox = document.querySelector(`input[name="historiaMedica.enfermedadesCronicas"][value="${enfermedad}"]`);
+                            if (checkbox) {
+                                checkbox.checked = true;
+                            }
+                        });
+                    }
+                    
+                    document.getElementById('alergiasMedicamentos').value = paciente.historiaMedica.alergiasMedicamentos || '';
+                    document.getElementById('cirugiasPrevias').value = paciente.historiaMedica.cirugiasPrevias || '';
+                    
+                    // Si hay un array de medicamentos, convertirlo a texto
+                    if (paciente.historiaMedica.medicamentos) {
+                        if (Array.isArray(paciente.historiaMedica.medicamentos)) {
+                            const medicamentosTexto = paciente.historiaMedica.medicamentos.map(med => {
+                                return `${med.nombre || ''} - ${med.dosis || ''} - ${med.frecuencia || ''}`;
+                            }).join('\n');
+                            document.getElementById('medicamentos').value = medicamentosTexto;
+                        } else {
+                            document.getElementById('medicamentos').value = paciente.historiaMedica.medicamentos;
+                        }
+                    }
+                }
+                
+                // Hábitos
+                if (paciente.habitos) {
+                    document.getElementById('tipoDieta').value = paciente.habitos.tipoDieta || '';
+                    document.getElementById('consumoAgua').value = paciente.habitos.consumoAgua || '';
+                    document.getElementById('consumoTabaco').value = paciente.habitos.consumoTabaco || '';
+                    document.getElementById('consumoAlcohol').value = paciente.habitos.consumoAlcohol || '';
+                    document.getElementById('consumoDrogas').value = paciente.habitos.consumoDrogas || '';
+                    document.getElementById('practicaDeportes').value = paciente.habitos.practicaDeportes || '';
+                    document.getElementById('frecuenciaDeporte').value = paciente.habitos.frecuenciaDeporte || '';
+                    document.getElementById('intensidadDeporte').value = paciente.habitos.intensidadDeporte || '';
+                    document.getElementById('duracionDeporte').value = paciente.habitos.duracionDeporte || '';
+                    document.getElementById('lesionesDeportivas').value = paciente.habitos.lesionesDeportivas || '';
+                    document.getElementById('horasSueno').value = paciente.habitos.horasSueno || '';
+                    document.getElementById('calidadSueno').value = paciente.habitos.calidadSueno || '';
+                    document.getElementById('problemasSueno').value = paciente.habitos.problemasSueno || '';
+                }
+            }
+            
+            // Calcular edad a partir de la fecha de nacimiento
+            function calcularEdad() {
+                const fechaNacimiento = document.getElementById('fechaNacimiento').value;
+                
+                if (fechaNacimiento) {
+                    const fechaNac = new Date(fechaNacimiento);
+                    const hoy = new Date();
+                    
+                    let edad = hoy.getFullYear() - fechaNac.getFullYear();
+                    const mes = hoy.getMonth() - fechaNac.getMonth();
+                    
+                    if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNac.getDate())) {
+                        edad--;
+                    }
+                    
+                    document.getElementById('edad').value = edad;
+                } else {
+                    document.getElementById('edad').value = '';
+                }
+            }
+            
+            // Función para guardar los cambios
+            function guardarCambios() {
+                // Mostrar indicador de carga
+                alertaGuardado.classList.add('d-none');
+                alertaError.classList.add('d-none');
+                
+                // Obtener valores del formulario
+                const nombre = document.getElementById('nombre').value;
+                const rut = document.getElementById('rut').value;
+                const fechaNacimiento = document.getElementById('fechaNacimiento').value ? new Date(document.getElementById('fechaNacimiento').value) : null;
+                const genero = document.getElementById('genero').value;
+                const estado = document.getElementById('estado').value;
+                
+                // Validar campos obligatorios
+                if (!nombre || !rut || !fechaNacimiento || !genero || !estado) {
+                    mensajeError.textContent = 'Por favor, complete todos los campos obligatorios';
+                    alertaError.classList.remove('d-none');
+                    return;
+                }
+                
+                // Construir objeto con datos actualizados
+                const datosActualizados = {
+                    // Datos personales
+                    nombre: nombre,
+                    rut: rut,
+                    fechaNacimiento: fechaNacimiento,
+                    genero: genero,
+                    estadoCivil: document.getElementById('estadoCivil').value,
+                    nacionalidad: document.getElementById('nacionalidad').value,
+                    estado: estado,
+                    dominanciaManual: document.getElementById('dominanciaManual').value,
+                    dominanciaPodal: document.getElementById('dominanciaPodal').value,
+                    
+                    // Información de contacto
+                    direccion: document.getElementById('direccion').value,
+                    telefonoPersonal: document.getElementById('telefonoPersonal').value,
+                    telefonoTrabajo: document.getElementById('telefonoTrabajo').value,
+                    email: document.getElementById('email').value,
+                    
+                    // Datos sociolaborales
+                    nivelEducacional: document.getElementById('nivelEducacional').value,
+                    ocupacion: document.getElementById('ocupacion').value,
+                    tipoTrabajo: document.getElementById('tipoTrabajo').value,
+                    horarioLaboral: document.getElementById('horarioLaboral').value,
+                    condicionesErgonomicas: document.getElementById('condicionesErgonomicas').value,
+                    nivelActividadFisica: document.getElementById('nivelActividadFisica').value,
+                    
+                    // Información de emergencia
+                    contactoEmergencia: document.getElementById('contactoEmergencia').value,
+                    parentesco: document.getElementById('parentesco').value,
+                    telefonoEmergencia: document.getElementById('telefonoEmergencia').value,
+                    sistemaSalud: document.getElementById('sistemaSalud').value,
+                    
+                    // Diagnóstico actual
+                    diagnostico: document.getElementById('diagnostico').value,
+                    
+                    // Fecha de actualización
+                    fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                // Motivo de consulta
+                datosActualizados.motivoConsulta = {
+                    profesionalDeriva: document.getElementById('profesionalDeriva').value,
+                    especialidad: document.getElementById('especialidad').value,
+                    diagnosticoMedico: document.getElementById('diagnosticoMedico').value,
+                    motivoConsulta: document.getElementById('motivoConsulta').value,
+                    objetivosCorto: document.getElementById('objetivosCorto').value,
+                    objetivosMedio: document.getElementById('objetivosMedio').value,
+                    objetivosLargo: document.getElementById('objetivosLargo').value,
+                    expectativasRecuperacion: document.getElementById('expectativasRecuperacion').value,
+                    nivelCompromiso: document.getElementById('nivelCompromiso').value
+                };
+                
+                // Historia médica
+                datosActualizados.historiaMedica = {
+                    enfermedadesCronicas: Array.from(document.querySelectorAll('input[name="historiaMedica.enfermedadesCronicas"]:checked')).map(cb => cb.value),
+                    alergiasMedicamentos: document.getElementById('alergiasMedicamentos').value,
+                    cirugiasPrevias: document.getElementById('cirugiasPrevias').value,
+                    medicamentos: document.getElementById('medicamentos').value
+                };
+                
+                // Hábitos
+                datosActualizados.habitos = {
+                    tipoDieta: document.getElementById('tipoDieta').value,
+                    consumoAgua: document.getElementById('consumoAgua').value,
+                    consumoTabaco: document.getElementById('consumoTabaco').value,
+                    consumoAlcohol: document.getElementById('consumoAlcohol').value,
+                    consumoDrogas: document.getElementById('consumoDrogas').value,
+                    practicaDeportes: document.getElementById('practicaDeportes').value,
+                    frecuenciaDeporte: document.getElementById('frecuenciaDeporte').value,
+                    intensidadDeporte: document.getElementById('intensidadDeporte').value,
+                    duracionDeporte: document.getElementById('duracionDeporte').value ? parseInt(document.getElementById('duracionDeporte').value) : null,
+                    lesionesDeportivas: document.getElementById('lesionesDeportivas').value,
+                    horasSueno: document.getElementById('horasSueno').value ? parseInt(document.getElementById('horasSueno').value) : null,
+                    calidadSueno: document.getElementById('calidadSueno').value,
+                    problemasSueno: document.getElementById('problemasSueno').value
+                };
+                
+                // Guardar en Firestore
+                firebase.firestore().collection('pacientes').doc(pacienteId).update(datosActualizados)
+                    .then(function() {
+                        // Mostrar mensaje de éxito
+                        alertaGuardado.classList.remove('d-none');
+                        
+                        // Esperar 1.5 segundos y redirigir
+                        setTimeout(function() {
+                            window.location.href = `ver-paciente.html?id=${pacienteId}`;
+                        }, 1500);
+                    })
+                    .catch(function(error) {
+                        console.error('Error al actualizar paciente:', error);
+                        mensajeError.textContent = error.message || 'Error al actualizar paciente';
+                        alertaError.classList.remove('d-none');
+                    });
+            }
+        });
+    </script>
+</body>
+</html>
