@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Evolución - SISTEMAKINE</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Barra lateral -->
+        <div class="sidebar">
+            <div class="sidebar-heading bg-primary text-white py-3">
+                <i class="fas fa-heartbeat me-2"></i>Sistema Kinesiológico
+            </div>
+            
+            <div class="list-group list-group-flush">
+                <a href="dashboard.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-home me-2"></i>Panel Principal
+                </a>
+                
+                <div class="sidebar-category">PACIENTES</div>
+                
+                <a href="nuevo-paciente.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-user-plus me-2"></i>Formulario de Ingreso
+                </a>
+                <a href="listado-pacientes.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-users me-2"></i>Listado de Pacientes
+                </a>
+                
+                <div class="sidebar-category">EVALUACIÓN</div>
+                
+                <a href="diagnostico.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-stethoscope me-2"></i>Diagnóstico Kinesiológico
+                </a>
+                <a href="plan-tratamiento.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-clipboard-list me-2"></i>Plan de Tratamiento
+                </a>
+                <a href="evoluciones.html" class="list-group-item list-group-item-action active">
+                    <i class="fas fa-chart-line me-2"></i>Evoluciones
+                </a>
+                
+                <div class="sidebar-category">ANÁLISIS</div>
+                
+                <a href="dashboard-analisis.html" class="list-group-item list-group-item-action">
+                    <i class="fas fa-chart-bar me-2"></i>Dashboard y Análisis
+                </a>
+            </div>
+            
+            <div class="mt-auto p-3 border-top">
+                <button id="btnCerrarSesion" class="btn btn-danger w-100">
+                    <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                </button>
+            </div>
+        </div>
+        
+        <!-- Contenido principal -->
+        <div class="main-content w-100">
+            <!-- Cabecera con usuario -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="dashboard.html">Inicio</a></li>
+                        <li class="breadcrumb-item"><a href="listado-pacientes.html">Pacientes</a></li>
+                        <li class="breadcrumb-item" id="breadcrumbPaciente"><a href="#">Paciente</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Nueva Evolución</li>
+                    </ol>
+                </nav>
+                
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle me-2"></i><span id="nombreUsuario">Kinesiólogo</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="perfil.html"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="configuracion.html"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#" id="linkCerrarSesion"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Información del paciente (resumen) -->
+            <div class="card shadow-sm mb-4" id="infoPaciente">
+                <div class="card-body p-0">
+                    <div class="p-4 text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <p class="mt-2">Cargando información del paciente...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Última evolución -->
+            <div class="card shadow-sm mb-4" id="ultimaEvolucion">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Última Evolución</h5>
+                </div>
+                <div class="card-body">
+                    <div class="p-4 text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <p class="mt-2">Cargando última evolución...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Formulario de evolución -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-pen me-2"></i>Registro de Evolución</h5>
+                </div>
+                <div class="card-body">
+                    <form id="formEvolucion">
+                        <!-- Datos básicos -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="fechaEvolucion" class="form-label">Fecha *</label>
+                                    <input type="date" class="form-control" id="fechaEvolucion" name="fechaEvolucion" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="horaEvolucion" class="form-label">Hora *</label>
+                                    <input type="time" class="form-control" id="horaEvolucion" name="horaEvolucion" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="numeroSesion" class="form-label">Número de Sesión *</label>
+                                    <input type="number" class="form-control" id="numeroSesion" name="numeroSesion" min="1" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="tipoSesion" class="form-label">Tipo de Sesión *</label>
+                                    <select class="form-select" id="tipoSesion" name="tipoSesion" required>
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Evaluación">Evaluación</option>
+                                        <option value="Tratamiento">Tratamiento</option>
+                                        <option value="Control">Control</option>
+                                        <option value="Reevaluación">Reevaluación</option>
+                                        <option value="Alta">Alta</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Signos vitales -->
+                        <h6 class="mb-3"><i class="fas fa-heartbeat me-2"></i>Signos Vitales</h6>
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="frecuenciaCardiaca" class="form-label">Frecuencia Cardíaca (lpm)</label>
+                                    <input type="number" class="form-control" id="frecuenciaCardiaca" name="frecuenciaCardiaca">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="frecuenciaRespiratoria" class="form-label">Frecuencia Respiratoria (rpm)</label>
+                                    <input type="number" class="form-control" id="frecuenciaRespiratoria" name="frecuenciaRespiratoria">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="presionArterial" class="form-label">Presión Arterial (mmHg)</label>
+                                    <input type="text" class="form-control" id="presionArterial" name="presionArterial" placeholder="120/80">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="saturacionOxigeno" class="form-label">Saturación Oxígeno (%)</label>
+                                    <input type="number" class="form-control" id="saturacionOxigeno" name="saturacionOxigeno" min="0" max="100">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Evaluación de dolor -->
+                        <h6 class="mb-3"><i class="fas fa-exclamation-circle me-2"></i>Evaluación de Dolor</h6>
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="intensidadDolorInicial" class="form-label">Intensidad dolor al inicio (EVA 0-10)</label>
+                                    <input type="range" class="form-range eva-slider" id="intensidadDolorInicial" name="intensidadDolorInicial" min="0" max="10" step="1" value="0">
+                                    <div class="d-flex justify-content-between">
+                                        <span>0 - Sin dolor</span>
+                                        <span id="valorEvaInicial">0</span>
+                                        <span>10 - Máximo dolor</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="intensidadDolorFinal" class="form-label">Intensidad dolor al final (EVA 0-10)</label>
+                                    <input type="range" class="form-range eva-slider" id="intensidadDolorFinal" name="intensidadDolorFinal" min="0" max="10" step="1" value="0">
+                                    <div class="d-flex justify-content-between">
+                                        <span>0 - Sin dolor</span>
+                                        <span id="valorEvaFinal">0</span>
+                                        <span>10 - Máximo dolor</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="ubicacionDolor" class="form-label">Ubicación del dolor</label>
+                                    <input type="text" class="form-control" id="ubicacionDolor" name="ubicacionDolor">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Procedimientos realizados -->
+                        <h6 class="mb-3"><i class="fas fa-clipboard-list me-2"></i>Procedimientos Realizados</h6>
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="procTerapiaManual" name="procedimientos" value="Terapia Manual">
+                                        <label class="form-check-label" for="procTerapiaManual">Terapia Manual</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="procElectroterapia" name="procedimientos" value="Electroterapia">
+                                        <label class="form-check-label" for="procElectroterapia">Electroterapia</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="procTermoterapia" name="procedimientos" value="Termoterapia">
+                                        <label class="form-check-label" for="procTermoterapia">Termoterapia</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="procCrioterapia" name="procedimientos" value="Crioterapia">
+                                        <label class="form-check-label" for="procCrioterapia">Crioterapia</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="procEjercicios" name="procedimientos" value="Ejercicios Terapéuticos">
+                                        <label class="form-check-label" for="procEjercicios">Ejercicios Terapéuticos</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="procEstiramientos" name="procedimientos" value="Estiramientos">
+                                        <label class="form-check-label" for="procEstiramientos">Estiramientos</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="procMasoterapia" name="procedimientos" value="Masoterapia">
+                                        <label class="form-check-label" for="procMasoterapia">Masoterapia</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="procVendaje" name="procedimientos" value="Vendaje Funcional">
+                                        <label class="form-check-label" for="procVendaje">Vendaje Funcional</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="procEducacion" name="procedimientos" value="Educación Paciente">
+                                        <label class="form-check-label" for="procEducacion">Educación Paciente</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="detallesProcedimientos" class="form-label">Detalles de procedimientos realizados *</label>
+                                    <textarea class="form-control" id="detallesProcedimientos" name="detallesProcedimientos" rows="4" required></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Evolución y Observaciones -->
+                        <h6 class="mb-3"><i class="fas fa-comment-medical me-2"></i>Evolución y Observaciones</h6>
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="descripcionEvolucion" class="form-label">Descripción de la evolución *</label>
+                                    <textarea class="form-control" id="descripcionEvolucion" name="descripcionEvolucion" rows="4" required></textarea>
+                                    <div class="form-text">Describa la evolución del paciente en relación a la sesión anterior. Incluya avances, retrocesos o cambios en la sintomatología.</div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="respuestaTratamiento" class="form-label">Respuesta al tratamiento</label>
+                                    <select class="form-select" id="respuestaTratamiento" name="respuestaTratamiento">
+                                        <option value="" selected disabled>Seleccionar...</option>
+                                        <option value="Excelente">Excelente</option>
+                                        <option value="Buena">Buena</option>
+                                        <option value="Regular">Regular</option>
+                                        <option value="Mala">Mala</option>
+                                        <option value="Sin cambios">Sin cambios</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="observaciones" class="form-label">Observaciones adicionales</label>
+                                    <textarea class="form-control" id="observaciones" name="observaciones" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Plan para próxima sesión -->
+                        <h6 class="mb-3"><i class="fas fa-calendar-alt me-2"></i>Plan para Próxima Sesión</h6>
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="planProximaSesion" class="form-label">Plan propuesto *</label>
+                                    <textarea class="form-control" id="planProximaSesion" name="planProximaSesion" rows="3" required></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="fechaProximaSesion" class="form-label">Fecha próxima sesión</label>
+                                    <input type="date" class="form-control" id="fechaProximaSesion" name="fechaProximaSesion">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="recomendacionesPaciente" class="form-label">Recomendaciones para el paciente</label>
+                                    <textarea class="form-control" id="recomendacionesPaciente" name="recomendacionesPaciente" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Botones de acción -->
+                        <div class="d-flex justify-content-between">
+                            <a href="#" id="btnVolver" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Volver
+                            </a>
+                            <div>
+                                <button type="button" id="btnBorrador" class="btn btn-outline-primary me-2">
+                                    <i class="fas fa-save me-2"></i>Guardar como Borrador
+                                </button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-check-circle me-2"></i>Guardar Evolución
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerta de guardado -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toastGuardado" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i>Evolución guardada correctamente
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    
+    <!-- Configuración de Firebase y scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtener ID del paciente de la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const pacienteId = urlParams.get('id');
+            const evolucionId = urlParams.get('evolucionId'); // Por si es edición
+            
+            if (!pacienteId) {
+                alert('ID de paciente no especificado');
+                window.location.href = 'listado-pacientes.html';
+                return;
+            }
+            
+            // Referencias a elementos DOM
+            const infoPaciente = document.getElementById('infoPaciente');
+            const ultimaEvolucion = document.getElementById('ultimaEvolucion');
+            const formEvolucion = document.getElementById('formEvolucion');
+            const btnVolver = document.getElementById('btnVolver');
+            const btnBorrador = document.getElementById('btnBorrador');
+            const breadcrumbPaciente = document.getElementById('breadcrumbPaciente');
+            
+            // Sliders de dolor
+            const sliderDolorInicial = document.getElementById('intensidadDolorInicial');
+            const valorEvaInicial = document.getElementById('valorEvaInicial');
+            const sliderDolorFinal = document.getElementById('intensidadDolorFinal');
+            const valorEvaFinal = document.getElementById('valorEvaFinal');
+            
+            // Inicialización
+            cargarDatosPaciente();
+            cargarUltimaEvolucion();
+            
+            // Establecer fecha y hora actual
+            const ahora = new Date();
+            document.getElementById('fechaEvolucion').value = window.utils.formatearFechaInput(ahora);
+            document.getElementById('horaEvolucion').value = ahora.getHours().toString().padStart(2, '0') + ':' + ahora.getMinutes().toString().padStart(2, '0');
+            
+            // Si es edición, cargar datos de la evolución
+            if (evolucionId) {
+                cargarEvolucion(evolucionId);
+                document.title = "Editar Evolución - SISTEMAKINE";
+            } else {
+                // Obtener próximo número de sesión
+                obtenerProximoNumeroSesion();
+            }
+            
+            // Eventos
+            sliderDolorInicial.addEventListener('input', function() {
+                valorEvaInicial.textContent = this.value;
+            });
+            
+            sliderDolorFinal.addEventListener('input', function() {
+                valorEvaFinal.textContent = this.value;
+            });
+            
+            btnVolver.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = `ver-paciente.html?id=${pacienteId}`;
+            });
+            
+            btnBorrador.addEventListener('click', function() {
+                guardarEvolucion(true);
+            });
+            
+            formEvolucion.addEventListener('submit', function(e) {
+                e.preventDefault();
+                guardarEvolucion(false);
+            });
+            
+            // Función para cargar datos del paciente
+            function cargarDatosPaciente() {
+                firebase.firestore().collection('pacientes').doc(pacienteId).get()
+                    .then(function(doc) {
+                        if (!doc.exists) {
+                            infoPaciente.querySelector('.card-body').innerHTML = '<div class="alert alert-danger m-4">Paciente no encontrado</div>';
+                            return;
+                        }
+                        
+                        const paciente = doc.data();
+                        
+                        // Actualizar título de la página
+                        document.title = `Evolución de ${paciente.nombre} - SISTEMAKINE`;
+                        
+                        // Actualizar breadcrumb
+                        breadcrumbPaciente.innerHTML = `<a href="ver-paciente.html?id=${pacienteId}">${paciente.nombre}</a>`;
+                        
+                        // Mostrar información del paciente
+                        mostrarInfoPaciente(paciente);
+                    })
+                    .catch(function(error) {
+                        console.error('Error al cargar datos del paciente:', error);
+                        infoPaciente.querySelector('.card-body').innerHTML = '<div class="alert alert-danger m-4">Error al cargar datos del paciente</div>';
+                    });
+            }
+            
+            // Función para mostrar información del paciente
+            function mostrarInfoPaciente(paciente) {
+                const edad = paciente.edad || window.utils.calcularEdad(paciente.fechaNacimiento) || 'No registrada';
+                
+                infoPaciente.querySelector('.card-body').innerHTML = `
+                    <div class="row align-items-center">
+                        <div class="col-md-2 text-center">
+                            <div class="avatar bg-primary text-white mx-auto" style="width: 80px; height: 80px; font-size: 2rem; display: flex; align-items: center; justify-content: center;">
+                                ${window.utils.obtenerIniciales(paciente.nombre)}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h4 class="mb-1">${paciente.nombre}</h4>
+                            <p class="mb-0 text-muted">
+                                <i class="fas fa-id-card me-1"></i> ${paciente.rut || 'Sin RUT'} | 
+                                <i class="fas fa-birthday-cake me-1"></i> ${edad} años | 
+                                <i class="fas fa-venus-mars me-1"></i> ${paciente.genero || 'No especificado'}
+                            </p>
+                            <p class="mb-0 text-muted">
+                                <i class="fas fa-stethoscope me-1"></i> ${paciente.diagnostico || paciente.motivoConsulta?.diagnosticoMedico || 'Sin diagnóstico registrado'}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <a href="ver-paciente.html?id=${pacienteId}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-user me-1"></i> Ver Ficha Completa
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Función para cargar última evolución
+            function cargarUltimaEvolucion() {
+                firebase.firestore().collection('evoluciones')
+                    .where('pacienteId', '==', pacienteId)
+                    .orderBy('fecha', 'desc')
+                    .limit(1)
+                    .get()
+                    .then(function(snapshot) {
+                        if (snapshot.empty) {
+                            ultimaEvolucion.querySelector('.card-body').innerHTML = '<div class="alert alert-info m-0">No hay evoluciones previas registradas</div>';
+                            return;
+                        }
+                        
+                        const evolucion = snapshot.docs[0].data();
+                        mostrarUltimaEvolucion(evolucion);
+                    })
+                    .catch(function(error) {
+                        console.error('Error al cargar última evolución:', error);
+                        ultimaEvolucion.querySelector('.card-body').innerHTML = '<div class="alert alert-danger m-0">Error al cargar última evolución</div>';
+                    });
+            }
+            
+            // Función para mostrar última evolución
+            function mostrarUltimaEvolucion(evolucion) {
+                const fecha = evolucion.fecha ? window.utils.formatearFecha(evolucion.fecha, true) : 'Fecha no registrada';
+                
+                ultimaEvolucion.querySelector('.card-body').innerHTML = `
+                    <div class="mb-3">
+                        <h6>${fecha} - Sesión #${evolucion.numeroSesion || '?'} (${evolucion.tipoSesion || 'Tipo no especificado'})</h6>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p class="mb-2"><strong>Procedimientos realizados:</strong></p>
+                            <p>${evolucion.procedimientos ? evolucion.procedimientos.join(', ') : 'No registrados'}</p>
+                        </div>
+                        <div class="col-md-8">
+                            <p class="mb-2"><strong>Evolución:</strong></p>
+                            <p>${evolucion.descripcion || 'No registrada'}</p>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <p class="mb-2"><strong>Plan para próxima sesión:</strong></p>
+                            <p>${evolucion.planProximaSesion || 'No registrado'}</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Función para obtener próximo número de sesión
+            function obtenerProximoNumeroSesion() {
+                firebase.firestore().collection('evoluciones')
+                    .where('pacienteId', '==', pacienteId)
+                    .orderBy('numeroSesion', 'desc')
+                    .limit(1)
+                    .get()
+                    .then(function(snapshot) {
+                        if (snapshot.empty) {
+                            document.getElementById('numeroSesion').value = 1;
+                            return;
+                        }
+                        
+                        const ultimaSesion = snapshot.docs[0].data().numeroSesion || 0;
+                        document.getElementById('numeroSesion').value = ultimaSesion + 1;
+                    })
+                    .catch(function(error) {
+                        console.error('Error al obtener próximo número de sesión:', error);
+                        document.getElementById('numeroSesion').value = 1;
+                    });
+            }
+            
+            // Función para cargar evolución existente (en caso de edición)
+            function cargarEvolucion(evolucionId) {
+                firebase.firestore().collection('evoluciones').doc(evolucionId).get()
+                    .then(function(doc) {
+                        if (!doc.exists) {
+                            alert('Evolución no encontrada');
+                            return;
+                        }
+                        
+                        const evolucion = doc.data();
+                        
+                        // Establecer valores en el formulario
+                        if (evolucion.fecha) {
+                            document.getElementById('fechaEvolucion').value = window.utils.formatearFechaInput(evolucion.fecha);
+                        }
+                        
+                        if (evolucion.hora) {
+                            document.getElementById('horaEvolucion').value = evolucion.hora;
+                        }
+                        
+                        if (evolucion.numeroSesion) {
+                            document.getElementById('numeroSesion').value = evolucion.numeroSesion;
+                        }
+                        
+                        if (evolucion.tipoSesion) {
+                            document.getElementById('tipoSesion').value = evolucion.tipoSesion;
+                        }
+                        
+                        if (evolucion.frecuenciaCardiaca) {
+                            document.getElementById('frecuenciaCardiaca').value = evolucion.frecuenciaCardiaca;
+                        }
+                        
+                        if (evolucion.frecuenciaRespiratoria) {
+                            document.getElementById('frecuenciaRespiratoria').value = evolucion.frecuenciaRespiratoria;
+                        }
+                        
+                        if (evolucion.presionArterial) {
+                            document.getElementById('presionArterial').value = evolucion.presionArterial;
+                        }
+                        
+                        if (evolucion.saturacionOxigeno) {
+                            document.getElementById('saturacionOxigeno').value = evolucion.saturacionOxigeno;
+                        }
+                        
+                        if (evolucion.intensidadDolorInicial) {
+                            document.getElementById('intensidadDolorInicial').value = evolucion.intensidadDolorInicial;
+                            document.getElementById('valorEvaInicial').textContent = evolucion.intensidadDolorInicial;
+                        }
+                        
+                        if (evolucion.intensidadDolorFinal) {
+                            document.getElementById('intensidadDolorFinal').value = evolucion.intensidadDolorFinal;
+                            document.getElementById('valorEvaFinal').textContent = evolucion.intensidadDolorFinal;
+                        }
+                        
+                        if (evolucion.ubicacionDolor) {
+                            document.getElementById('ubicacionDolor').value = evolucion.ubicacionDolor;
+                        }
+                        
+                        // Marcar procedimientos realizados
+                        if (evolucion.procedimientos && evolucion.procedimientos.length > 0) {
+                            evolucion.procedimientos.forEach(function(proc) {
+                                const checkbox = document.querySelector(`input[name="procedimientos"][value="${proc}"]`);
+                                if (checkbox) {
+                                    checkbox.checked = true;
+                                }
+                            });
+                        }
+                        
+                        if (evolucion.detallesProcedimientos) {
+                            document.getElementById('detallesProcedimientos').value = evolucion.detallesProcedimientos;
+                        }
+                        
+                        if (evolucion.descripcion) {
+                            document.getElementById('descripcionEvolucion').value = evolucion.descripcion;
+                        }
+                        
+                        if (evolucion.respuestaTratamiento) {
+                            document.getElementById('respuestaTratamiento').value = evolucion.respuestaTratamiento;
+                        }
+                        
+                        if (evolucion.observaciones) {
+                            document.getElementById('observaciones').value = evolucion.observaciones;
+                        }
+                        
+                        if (evolucion.planProximaSesion) {
+                            document.getElementById('planProximaSesion').value = evolucion.planProximaSesion;
+                        }
+                        
+                        if (evolucion.fechaProximaSesion) {
+                            document.getElementById('fechaProximaSesion').value = window.utils.formatearFechaInput(evolucion.fechaProximaSesion);
+                        }
+                        
+                        if (evolucion.recomendacionesPaciente) {
+                            document.getElementById('recomendacionesPaciente').value = evolucion.recomendacionesPaciente;
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('Error al cargar evolución:', error);
+                        alert('Error al cargar datos de la evolución');
+                    });
+            }
+            
+            // Función para guardar evolución
+            function guardarEvolucion(esBorrador) {
+                // Obtener valores del formulario
+                const fechaEvolucion = document.getElementById('fechaEvolucion').value;
+                const horaEvolucion = document.getElementById('horaEvolucion').value;
+                const numeroSesion = parseInt(document.getElementById('numeroSesion').value);
+                const tipoSesion = document.getElementById('tipoSesion').value;
+                
+                // Validar campos obligatorios
+                if (!esBorrador && (!fechaEvolucion || !horaEvolucion || !numeroSesion || !tipoSesion)) {
+                    alert('Por favor, complete todos los campos obligatorios');
+                    return;
+                }
+                
+                // Obtener valores de checkboxes
+                const procedimientosChecked = document.querySelectorAll('input[name="procedimientos"]:checked');
+                const procedimientos = Array.from(procedimientosChecked).map(checkbox => checkbox.value);
+                
+                // Construir objeto de evolución
+                const evolucionData = {
+                    pacienteId: pacienteId,
+                    fecha: fechaEvolucion ? new Date(fechaEvolucion) : firebase.firestore.FieldValue.serverTimestamp(),
+                    hora: horaEvolucion,
+                    numeroSesion: numeroSesion,
+                    tipoSesion: tipoSesion,
+                    frecuenciaCardiaca: parseInt(document.getElementById('frecuenciaCardiaca').value) || null,
+                    frecuenciaRespiratoria: parseInt(document.getElementById('frecuenciaRespiratoria').value) || null,
+                    presionArterial: document.getElementById('presionArterial').value,
+                    saturacionOxigeno: parseInt(document.getElementById('saturacionOxigeno').value) || null,
+                    intensidadDolorInicial: parseInt(document.getElementById('intensidadDolorInicial').value) || 0,
+                    intensidadDolorFinal: parseInt(document.getElementById('intensidadDolorFinal').value) || 0,
+                    ubicacionDolor: document.getElementById('ubicacionDolor').value,
+                    procedimientos: procedimientos,
+                    detallesProcedimientos: document.getElementById('detallesProcedimientos').value,
+                    descripcion: document.getElementById('descripcionEvolucion').value,
+                    respuestaTratamiento: document.getElementById('respuestaTratamiento').value,
+                    observaciones: document.getElementById('observaciones').value,
+                    planProximaSesion: document.getElementById('planProximaSesion').value,
+                    fechaProximaSesion: document.getElementById('fechaProximaSesion').value ? new Date(document.getElementById('fechaProximaSesion').value) : null,
+                    recomendacionesPaciente: document.getElementById('recomendacionesPaciente').value,
+                    estado: esBorrador ? 'Borrador' : 'Completado',
+                    profesionalId: firebase.auth().currentUser.uid,
+                    profesionalNombre: firebase.auth().currentUser.displayName || firebase.auth().currentUser.email,
+                    fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
+                    fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                // Guardar en Firestore
+                const collection = firebase.firestore().collection('evoluciones');
+                
+                // Si es edición, actualizar documento existente
+                if (evolucionId) {
+                    collection.doc(evolucionId).update(evolucionData)
+                        .then(function() {
+                            // Actualizar fecha de última visita del paciente si no es borrador
+                            if (!esBorrador) {
+                                firebase.firestore().collection('pacientes').doc(pacienteId).update({
+                                    ultimaVisita: firebase.firestore.FieldValue.serverTimestamp(),
+                                    fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                            }
+                            
+                            // Mostrar mensaje de éxito
+                            const toastGuardado = new bootstrap.Toast(document.getElementById('toastGuardado'));
+                            toastGuardado.show();
+                            
+                            // Redirigir después de 2 segundos
+                            setTimeout(function() {
+                                window.location.href = `ver-paciente.html?id=${pacienteId}`;
+                            }, 2000);
+                        })
+                        .catch(function(error) {
+                            console.error('Error al actualizar evolución:', error);
+                            alert('Error al actualizar evolución: ' + error.message);
+                        });
+                } else {
+                    // Crear nuevo documento
+                    collection.add(evolucionData)
+                        .then(function(docRef) {
+                            // Actualizar fecha de última visita del paciente si no es borrador
+                            if (!esBorrador) {
+                                firebase.firestore().collection('pacientes').doc(pacienteId).update({
+                                    ultimaVisita: firebase.firestore.FieldValue.serverTimestamp(),
+                                    fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                            }
+                            
+                            // Mostrar mensaje de éxito
+                            const toastGuardado = new bootstrap.Toast(document.getElementById('toastGuardado'));
+                            toastGuardado.show();
+                            
+                            // Redirigir después de 2 segundos
+                            setTimeout(function() {
+                                window.location.href = `ver-paciente.html?id=${pacienteId}`;
+                            }, 2000);
+                        })
+                        .catch(function(error) {
+                            console.error('Error al guardar evolución:', error);
+                            alert('Error al guardar evolución: ' + error.message);
+                        });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
